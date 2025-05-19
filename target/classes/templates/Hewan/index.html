@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Data Hewan</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Data Hewan</h1>
+
+<form th:action="@{/hewan/save}" th:object="${hewan}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <input type="text" th:field="*{nama}" placeholder="Nama Hewan" required />
+    <input type="text" th:field="*{jenis}" placeholder="Jenis Hewan" required />
+    <input type="text" th:field="*{pemilik}" placeholder="Nama Pemilik" required />
+    <button type="submit" th:text="${hewan.id} == null ? 'Tambah' : 'Update'"></button>
+    
+</form>
+
+<hr/>
+
+<table border="1">
+    <tr>
+        <th>Nama</th>
+        <th>Jenis</th>
+        <th>Pemilik</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="h : ${hewanList}">
+        <td th:text="${h.nama}"></td>
+        <td th:text="${h.jenis}"></td>
+        <td th:text="${h.pemilik}"></td>
+        <td>
+            <a th:href="@{/hewan/delete/{id}(id=${h.id})}" onclick="return confirm('Hapus data ini?')">Hapus</a> |
+            <a th:href="@{/hewan/edit/{id}(id=${h.id})}">Edit</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
