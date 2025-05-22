@@ -1,5 +1,4 @@
 package PetClinic.PetClinic.Service;
-
 import PetClinic.PetClinic.Model.User;
 import PetClinic.PetClinic.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,4 +26,3 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
-

@@ -37,16 +37,16 @@ public class HewanController {
         hewanRepo.deleteById(id);
         return "redirect:/hewan";
     }
-
     @GetMapping("/edit/{id}")
-    public String editHewan(@PathVariable("id") Long id, Model model) {
-        Hewan hewan = hewanRepo.findById(id).orElse(null);
-            if (hewan != null) {
-            model.addAttribute("hewan", hewan);
-            model.addAttribute("hewanList", hewanRepo.findAll());
-            return "hewan/index";
+public String editHewan(@PathVariable("id") Long id, Model model) {
+    Hewan hewan = hewanRepo.findById(id).orElse(null);
+    if (hewan != null) {
+        model.addAttribute("hewan", hewan);
+        model.addAttribute("hewanList", hewanRepo.findAll());
+        return "hewan/index";
     } else {
         return "redirect:/hewan";
     }
 }
+
 }

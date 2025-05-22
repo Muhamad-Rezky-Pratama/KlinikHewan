@@ -3,6 +3,88 @@
 <head>
     <title>Data Hewan</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons a {
+            margin-right: 10px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .action-buttons a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            margin: 40px 0;
+        }
+    </style>
 </head>
 <body>
 <h1>Data Hewan</h1>
@@ -13,27 +95,27 @@
     <input type="text" th:field="*{jenis}" placeholder="Jenis Hewan" required />
     <input type="text" th:field="*{pemilik}" placeholder="Nama Pemilik" required />
     <button type="submit" th:text="${hewan.id} == null ? 'Tambah' : 'Update'"></button>
-    
 </form>
 
 <hr/>
 
-<table border="1">
+<table>
     <tr>
         <th>Nama</th>
         <th>Jenis</th>
         <th>Pemilik</th>
-        <th>Action</th>
+        <th>Aksi</th>
     </tr>
     <tr th:each="h : ${hewanList}">
         <td th:text="${h.nama}"></td>
         <td th:text="${h.jenis}"></td>
         <td th:text="${h.pemilik}"></td>
-        <td>
-            <a th:href="@{/hewan/delete/{id}(id=${h.id})}" onclick="return confirm('Hapus data ini?')">Hapus</a> |
+        <td class="action-buttons">
             <a th:href="@{/hewan/edit/{id}(id=${h.id})}">Edit</a>
+            <a th:href="@{/hewan/delete/{id}(id=${h.id})}" onclick="return confirm('Hapus data ini?')">Hapus</a>
         </td>
     </tr>
 </table>
+
 </body>
 </html>
