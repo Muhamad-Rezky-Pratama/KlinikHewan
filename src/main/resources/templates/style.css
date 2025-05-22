@@ -52,30 +52,17 @@ transition: 0.2s;
 
 /* Hero Section */
 .hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap; /* ini penting agar tidak turun ke bawah */
-  padding: 60px 0;
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+align-items: center;
+padding: 60px 0;
 }
 
 .hero-content {
-  flex: 1;
-  padding-right: 40px;
+flex: 1 1 50%;
+padding-right: 40px;
 }
-
-.hero-image {
-  flex: 1;
-  text-align: center;
-}
-
-.hero-image img {
-  max-width: 100%;
-  max-height: 350px;
-  border-radius: 20px;
-  object-fit: contain;
-}
-
 
 .hero-content h1 {
 font-size: 3rem;
@@ -140,8 +127,8 @@ border-radius: 20px;
 
 /* Produk Section */
 .products {
-  background-color: #f8f4fc;
-  padding: 60px 0;
+background-color: #f8f4fc;
+padding: 60px 0;
 }
 
 .products h2 {
@@ -247,95 +234,163 @@ color: #5e3b76;
   color: #aaa;
 }
 
-/* ===== SHOP PAGE STYLES ===== */
-
-/* Carousel Section */
-.carousel {
-  background-color: #fffdf8;
-  padding: 60px 0;
-  text-align: center;
+.reservation-form {
+  background-color: #fffefc;
+  padding: 50px 0;
 }
 
-.carousel h2 {
-  font-size: 2rem;
-  color: #5e3b76;
-  margin-bottom: 30px;
-}
-
-.carousel-wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.carousel-wrapper img {
-  width: 280px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.carousel-wrapper img:hover {
-  transform: scale(1.03);
-}
-
-/* Kategori Hewan */
-.categories {
-  background-color: #fdfaf4;
-  padding: 60px 0;
-  text-align: center;
-}
-
-.categories h2 {
-  font-size: 2rem;
-  color: #5e3b76;
-  margin-bottom: 40px;
-}
-
-.category-list {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-.category-card {
-  text-align: center;
-  width: 140px;
-}
-
-.category-card img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 4px solid #d58cdf;
-  padding: 5px;
+.reservation-form form {
   background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 30px;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
 }
 
-.category-card p {
-  margin-top: 10px;
+.reservation-form .form-group {
+  margin-bottom: 20px;
+}
+
+.reservation-form label {
+  display: block;
+  margin-bottom: 6px;
   font-weight: bold;
-  color: #333;
+  color: #5e3b76;
 }
 
-/* Product Section override (add location style) */
-.product-card p {
-  font-size: 0.9rem;
-  color: #888;
-  margin-top: 5px;
-}
-
-.carousel-section {
-  background-color: #fffdf8;
-  padding: 60px 0;
-}
-
-.hero-image img {
+.reservation-form input,
+.reservation-form select,
+.reservation-form textarea {
   width: 100%;
-  max-width: 500px;
-  height: auto;
-  border-radius: 20px;
+  padding: 12px 14px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+
+.reservation-form textarea {
+  resize: vertical;
+}
+
+.reservation-form button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.05rem;
+  background-color: #7b4ca0;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(123, 76, 160, 0.3);
+}s
+
+.reservation-form button:hover {
+  background-color: #693e8c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(123, 76, 160, 0.4);
+}
+
+.icon-input .input-wrapper {
+  position: relative;
+}
+
+.icon-input .input-wrapper input,
+.icon-input .input-wrapper select,
+.icon-input .input-wrapper textarea {
+  padding-left: 40px;
+}
+
+.form-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: #7b4ca0;
+  pointer-events: none;
+}
+
+.popup {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.3);
+display: none;
+justify-content: center;
+align-items: center;
+z-index: 9999;
+animation: fadeIn 0.3s ease-in-out;
+}
+
+.popup-content {
+background: #fff;
+padding: 30px;
+width: 90%;
+max-width: 420px;
+border-radius: 20px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+text-align: center;
+position: relative;
+animation: popIn 0.4s ease-in-out;
+}
+
+.popup-content h2 {
+color: #5e3b76;
+font-size: 1.6rem;
+margin-bottom: 10px;
+}
+
+.popup-content p {
+font-size: 0.95rem;
+color: #444;
+margin-bottom: 8px;
+}
+
+.popup-detail {
+text-align: left;
+margin-top: 15px;
+font-size: 0.9rem;
+color: #333;
+line-height: 1.5;
+}
+
+.close-btn {
+position: absolute;
+top: 12px;
+right: 16px;
+font-size: 1.4rem;
+color: #aaa;
+cursor: pointer;
+transition: 0.2s ease;
+}
+.close-btn:hover {
+color: #e74c3c;
+transform: scale(1.1);
+}
+
+/* Animasi */
+@keyframes popIn {
+0% {
+transform: scale(0.8);
+opacity: 0;
+}
+100% {
+transform: scale(1);
+opacity: 1;
+}
+}
+
+@keyframes fadeIn {
+from { background: rgba(0,0,0,0); }
+to { background: rgba(0,0,0,0.3); }
 }
