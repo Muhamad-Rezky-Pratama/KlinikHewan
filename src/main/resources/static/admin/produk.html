@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kelola Produk - PetClinic+</title>
+  <link rel="stylesheet" href="/css/admin-style.css">
+</head>
+<body>
+  <h2>Manajemen Produk</h2>
+
+  <!-- Form tambah/ubah produk -->
+  <form id="produkForm">
+    <input type="hidden" id="produkId">
+    <input type="text" id="nama" placeholder="Nama Produk" required>
+    <input type="text" id="kategori" placeholder="Kategori" required>
+    <input type="number" id="stok" placeholder="Stok" required>
+    <input type="number" id="harga" placeholder="Harga" required>
+    <button type="submit">Simpan</button>
+  </form>
+
+  <hr>
+
+  <!-- Tabel produk -->
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Kategori</th>
+        <th>Stok</th>
+        <th>Harga</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="produkTable"></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById("produkForm");
+    const tableBody = document.getElementById("produkTable");
+
+    async function loadProduk() {
+      const res = await fetch("/api/produk");
+      const data = await res.json();
+      tableBody.innerHTML = "";
+      data.forEach(p => {
+        tableBody.innerHTML += `
+          <tr>
+            <td>${p.nama}</td>
+            <td>${p.kategori}</td>
+            <td>${p.stok}</td>
+            <td>${p.harga}</td>
+            <td>
+              <button onclick="editProduk(${p.id})">Edit</button>
+              <button onclick="hapusProduk(${p.id})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("produkId").value;
+      const data = {
+        nama: document.getElementById("nama").value,
+        kategori: document.getElementById("kategori").value,
+        stok: parseInt(document.getElementById("stok").value),
+        harga: parseFloat(document.getElementById("harga").value)
+      };
+      const method = id ? "PUT" : "POST";
+      const url = id ? `/api/produk/${id}` : "/api/produk";
+      await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      form.reset();
+      loadProduk();
+    };
+
+    async function editProduk(id) {
+      const res = await fetch(`/api/produk/${id}`);
+      const data = await res.json();
+      document.getElementById("produkId").value = data.id;
+      document.getElementById("nama").value = data.nama;
+      document.getElementById("kategori").value = data.kategori;
+      document.getElementById("stok").value = data.stok;
+      document.getElementById("harga").value = data.harga;
+    }
+
+    async function hapusProduk(id) {
+      if (confirm("Yakin hapus produk ini?")) {
+        await fetch(`/api/produk/${id}`, { method: "DELETE" });
+        loadProduk();
+      }
+    }
+
+    loadProduk();
+  </script>
+</body>
+</html>

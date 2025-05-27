@@ -1,13 +1,19 @@
 package PetClinic.PetClinic.Controller;
-import PetClinic.PetClinic.Model.User;
-import PetClinic.PetClinic.Repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import PetClinic.PetClinic.Model.User;
+import PetClinic.PetClinic.Repository.UserRepository;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
 public class UserController {
 
     @Autowired
@@ -16,27 +22,11 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping("/register")
-    public String showRegisterForm(Model model) {
-        model.addAttribute("user", new User());
-        return "register";
-    }
-
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute("user") User user) {
+    public String processRegister(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole() == null) user.setRole("USER");
+        if (user.getRole() == null) user.setRole("user");
         userRepo.save(user);
-        return "redirect:/login";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/")
-    public String homePage() {
-        return "home";
+        return "Register berhasil";
     }
 }
