@@ -1,14 +1,14 @@
 package PetClinic.PetClinic.Model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Data;
 
 @Entity
@@ -17,14 +17,25 @@ import lombok.Data;
 public class Reservasi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
-    private String namaCustomer;
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "nama_hewan")
     private String namaHewan;
-    private String service;
 
-    @Temporal(TemporalType.DATE)
-    private Date tanggal;
+    @Column(name = "jenis_layanan")
+    private String jenisLayanan;
 
-    private String keterangan;
+    private LocalDate tanggal;
+
+    private String catatan;
+
+    private String dokter;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
 }

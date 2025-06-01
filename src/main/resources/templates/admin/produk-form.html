@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${produkId != null} ? 'Edit Produk' : 'Tambah Produk'">Form Produk</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <style>
+    .form-container {
+      max-width: 520px;
+      margin: 48px auto 0 auto;
+      background: #fff;
+      padding: 32px 28px 24px 28px;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #0001;
+    }
+    #produkForm input[type="text"],
+    #produkForm input[type="number"] {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+    #produkForm input, #produkForm button {
+      display: block;
+      width: 100%;
+      margin-bottom: 16px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+    #produkForm button[type="submit"], #produkForm button[type="button"] {
+      width: auto;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    @media (max-width: 700px) {
+      .form-container {
+        max-width: 98vw;
+        padding: 16px 6vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}" class="active">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}">Kelola User</a>
+        <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <div class="form-container">
+        <h2 th:text="${produkId != null} ? 'Edit Produk' : 'Tambah Produk'">Form Produk</h2>
+        <form id="produkForm">
+          <input type="hidden" id="produkId" th:value="${produkId}">
+          <input type="text" id="nama" placeholder="Nama Produk" required>
+          <input type="text" id="deskripsi" placeholder="Deskripsi" required>
+          <input type="number" id="harga" placeholder="Harga" required step="0.01">
+          <input type="text" id="gambar" placeholder="Link Gambar" required>
+          <input type="text" id="lokasi" placeholder="Lokasi" required>
+          <input type="text" id="kategori" placeholder="Kategori" required>
+          <input type="number" id="stok" placeholder="Stok" required>
+          <button type="submit" th:text="${produkId != null} ? 'Simpan Perubahan' : 'Tambah Produk'">Tambah Produk</button>
+          <button type="button" id="batalBtn">Batal</button>
+        </form>
+      </div>
+    </main>
+  </div>
+  <script>
+    const form = document.getElementById("produkForm");
+    const batalBtn = document.getElementById("batalBtn");
+    const produkId = document.getElementById("produkId").value;
+
+    // Jika edit, ambil data produk dan isi form
+    if (produkId) {
+      window.onload = async function() {
+        const res = await fetch(`/api/produk/${produkId}`);
+        const data = await res.json();
+        document.getElementById("nama").value = data.nama;
+        document.getElementById("deskripsi").value = data.deskripsi;
+        document.getElementById("harga").value = data.harga;
+        document.getElementById("gambar").value = data.gambar;
+        document.getElementById("lokasi").value = data.lokasi;
+        document.getElementById("kategori").value = data.kategori;
+        document.getElementById("stok").value = data.stok;
+      };
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {
+        nama: document.getElementById("nama").value,
+        deskripsi: document.getElementById("deskripsi").value,
+        harga: parseFloat(document.getElementById("harga").value),
+        gambar: document.getElementById("gambar").value,
+        lokasi: document.getElementById("lokasi").value,
+        kategori: document.getElementById("kategori").value,
+        stok: parseInt(document.getElementById("stok").value)
+      };
+      if (produkId) {
+        await fetch(`/api/produk/${produkId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+      } else {
+        await fetch("/api/produk", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+      }
+      window.location.href = "/admin/produk";
+    };
+    batalBtn.onclick = () => window.location.href = "/admin/produk";
+  </script>
+</body>
+</html>

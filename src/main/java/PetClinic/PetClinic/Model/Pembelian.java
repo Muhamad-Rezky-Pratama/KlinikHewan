@@ -1,6 +1,7 @@
 package PetClinic.PetClinic.Model;
 
-import jakarta.persistence.Column;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,14 +11,15 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "users") // tetap pakai tabel "users"
-public class Admin {
+@Table(name = "pembelian")
+public class Pembelian {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
+    private Integer id;
 
-    private String email;
-    private String password;
-    private String role; // tetap "ADMIN"
+    private Integer produkId;
+    private String namaPembeli;
+    private Integer jumlah;
+    private Double total;
+    private LocalDateTime tanggal;
 }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Kelola Pembelian</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}">Kelola User</a>
+        <a th:href="@{/admin/pembelian}" class="active">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <h2>Manajemen Pembelian</h2>
+      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah Pembelian</button>
+      <hr>
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>Produk ID</th>
+            <th>Nama Pembeli</th>
+            <th>Jumlah</th>
+            <th>Total</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelPembelian"></tbody>
+      </table>
+    </main>
+  </div>
+  <script>
+    const tabel = document.getElementById("tabelPembelian");
+    const tambahBtn = document.getElementById("tambahBtn");
+
+    tambahBtn.onclick = () => window.location.href = "/admin/pembelian/tambah";
+
+    async function loadPembelian() {
+      const res = await fetch("/api/pembelian");
+      const data = await res.json();
+      tabel.innerHTML = "";
+      data.forEach(p => {
+        tabel.innerHTML += `
+          <tr>
+            <td>${p.produkId}</td>
+            <td>${p.namaPembeli}</td>
+            <td>${p.jumlah}</td>
+            <td>${p.total}</td>
+            <td>${p.tanggal ? p.tanggal.replace('T', ' ').slice(0, 16) : ''}</td>
+            <td>
+              <button type="button" onclick="editPembelian(${p.id})">Edit</button>
+              <button type="button" onclick="hapusPembelian(${p.id})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    window.editPembelian = function(id) {
+      window.location.href = `/admin/pembelian/edit/${id}`;
+    }
+
+    window.hapusPembelian = async function(id) {
+      if (confirm("Yakin ingin menghapus data ini?")) {
+        await fetch(`/api/pembelian/${id}`, { method: "DELETE" });
+        loadPembelian();
+      }
+    }
+
+    loadPembelian();
+  </script>
+</body>
+</html>

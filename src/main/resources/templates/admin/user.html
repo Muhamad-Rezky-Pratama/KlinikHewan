@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Pengguna</title>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}" class="active">Kelola User</a>
+        <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <h2>Manajemen Pengguna</h2>
+      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah User</button>
+      <hr>
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+      </table>
+    </main>
+  </div>
+  <script>
+    const tableBody = document.getElementById("userTable");
+    const tambahBtn = document.getElementById("tambahBtn");
+
+    tambahBtn.onclick = () => window.location.href = "/admin/user/tambah";
+
+    async function loadUsers() {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      tableBody.innerHTML = "";
+      data.forEach(u => {
+        tableBody.innerHTML += `
+          <tr>
+            <td>${u.username}</td>
+            <td>${u.email}</td>
+            <td>${u.role}</td>
+            <td>
+              <button type="button" onclick="editUser(${u.id})">Edit</button>
+              <button type="button" onclick="deleteUser(${u.id})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    window.editUser = function(id) {
+      window.location.href = `/admin/user/edit/${id}`;
+    }
+
+    window.deleteUser = async function(id) {
+      if (confirm("Yakin ingin menghapus user ini?")) {
+        await fetch(`/api/user/${id}`, { method: "DELETE" });
+        loadUsers();
+      }
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>

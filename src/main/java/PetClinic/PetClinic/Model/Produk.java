@@ -11,12 +11,16 @@ import lombok.Data;
 @Data
 @Table(name = "produk")
 public class Produk {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     private String nama;
+    private String deskripsi;
+    private double harga;
+    private String gambar;
+    private String lokasi;
     private String kategori;
-    private Integer stok;
-    private Double harga;
+    private int stok;
 }

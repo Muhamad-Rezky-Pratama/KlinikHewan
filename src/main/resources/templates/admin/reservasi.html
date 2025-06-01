@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Kelola Reservasi</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}" class="active">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}">Kelola User</a>
+        <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <h2>Manajemen Reservasi</h2>
+      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah Reservasi</button>
+      <input type="text" id="searchInput" placeholder="Cari nama hewan, layanan, dokter..." style="margin:16px 0 0 0; width:250px;">
+      <hr>
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Hewan</th>
+            <th>Layanan</th>
+            <th>Tanggal</th>
+            <th>Catatan</th>
+            <th>Dokter</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </main>
+  </div>
+  <script>
+    const tbody = document.getElementById("tbody");
+    const tambahBtn = document.getElementById("tambahBtn");
+    const searchInput = document.getElementById("searchInput");
+    let allData = [];
+
+    tambahBtn.onclick = () => window.location.href = "/admin/reservasi/tambah";
+
+    async function loadData() {
+      const res = await fetch("/api/reservasi");
+      allData = await res.json();
+      renderTable(allData);
+    }
+
+    function renderTable(data) {
+      tbody.innerHTML = "";
+      data.forEach(r => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${r.userId}</td>
+            <td>${r.namaHewan}</td>
+            <td>${r.jenisLayanan}</td>
+            <td>${r.tanggal}</td>
+            <td>${r.catatan}</td>
+            <td>${r.dokter}</td>
+            <td>
+              <button type="button" onclick="editReservasi(${r.id})">Edit</button>
+              <button type="button" onclick="hapusReservasi(${r.id})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    window.editReservasi = function(id) {
+      window.location.href = `/admin/reservasi/edit/${id}`;
+    }
+
+    window.hapusReservasi = async function(id) {
+      if (confirm("Yakin ingin menghapus reservasi ini?")) {
+        await fetch(`/api/reservasi/${id}`, { method: "DELETE" });
+        loadData();
+      }
+    }
+
+    searchInput.oninput = function() {
+      const q = this.value.toLowerCase();
+      const filtered = allData.filter(r =>
+        (r.namaHewan && r.namaHewan.toLowerCase().includes(q)) ||
+        (r.jenisLayanan && r.jenisLayanan.toLowerCase().includes(q)) ||
+        (r.dokter && r.dokter.toLowerCase().includes(q))
+      );
+      renderTable(filtered);
+    };
+
+    loadData();
+  </script>
+</body>
+</html>

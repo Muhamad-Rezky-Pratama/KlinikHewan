@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tambah Produk - PetClinic+</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}" class="active">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}">Kelola User</a>
+        <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <h2>Tambah Produk</h2>
+      <form id="produkForm">
+        <input type="text" id="nama" placeholder="Nama Produk" required>
+        <input type="text" id="deskripsi" placeholder="Deskripsi" required>
+        <input type="number" id="harga" placeholder="Harga" required step="0.01">
+        <input type="text" id="gambar" placeholder="Link Gambar" required>
+        <input type="text" id="lokasi" placeholder="Lokasi" required>
+        <input type="text" id="kategori" placeholder="Kategori" required>
+        <input type="number" id="stok" placeholder="Stok" required>
+        <button type="submit">Tambah Produk</button>
+        <button type="button" id="batalBtn" style="margin-left:10px;">Batal</button>
+      </form>
+    </main>
+  </div>
+  <script>
+    const form = document.getElementById("produkForm");
+    const batalBtn = document.getElementById("batalBtn");
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {
+        nama: document.getElementById("nama").value,
+        deskripsi: document.getElementById("deskripsi").value,
+        harga: parseFloat(document.getElementById("harga").value),
+        gambar: document.getElementById("gambar").value,
+        lokasi: document.getElementById("lokasi").value,
+        kategori: document.getElementById("kategori").value,
+        stok: parseInt(document.getElementById("stok").value)
+      };
+      await fetch("/api/produk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      window.location.href = "/admin/produk";
+    };
+    batalBtn.onclick = () => window.location.href = "/admin/produk";
+  </script>
+</body>
+</html>

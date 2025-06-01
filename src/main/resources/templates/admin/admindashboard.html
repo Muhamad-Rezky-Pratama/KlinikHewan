@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Admin - PetClinic+</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}" class="active">Dashboard</a>
+        <a th:href="@{/admin/produk}">Kelola Produk</a>
+        <a href="#">Kelola Reservasi</a>
+        <a href="#">Kelola User</a>
+        <a href="#">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="dashboard-content">
+      <div class="dashboard-header">
+        <h1>Selamat Datang, Admin!</h1>
+        <p>Kelola sistem klinik, toko hewan, dan pengguna 🐾</p>
+      </div>
+
+      <div class="dashboard-cards">
+        <a th:href="@{/admin/produk}" class="card">
+          <h3>Produk</h3>
+          <p>Kelola produk toko</p>
+        </a>
+        <a href="#" class="card">
+          <h3>Reservasi</h3>
+          <p>Kelola reservasi layanan</p>
+        </a>
+        <a href="#" class="card">
+          <h3>Pengguna</h3>
+          <p>Kelola user & admin</p>
+        </a>
+        <a href="#" class="card">
+          <h3>Pembelian</h3>
+          <p>Kelola transaksi pembelian</p>
+        </a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${userId != null} ? 'Edit User' : 'Tambah User'">Form User</title>
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <style>
+    .form-container {
+      max-width: 520px;
+      margin: 48px auto 0 auto;
+      background: #fff;
+      padding: 32px 28px 24px 28px;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #0001;
+    }
+    #userForm input[type="text"],
+    #userForm input[type="email"],
+    #userForm input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+    #userForm button[type="submit"], #userForm button[type="button"] {
+      width: auto;
+      display: inline-block;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">PetClinic+</h2>
+      <nav class="menu">
+        <a th:href="@{/admin/admindashboard}">Dashboard</a>
+        <a th:href="@{/admin/produk}">Kelola Produk</a>
+        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+        <a th:href="@{/admin/user}" class="active">Kelola User</a>
+        <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
+        <a th:href="@{/logout}">Logout</a>
+      </nav>
+    </aside>
+    <main class="dashboard-content">
+      <div class="form-container">
+        <h2 th:text="${userId != null} ? 'Edit User' : 'Tambah User'">Form User</h2>
+        <form id="userForm">
+          <input type="hidden" id="userId" th:value="${userId}">
+          <input type="text" id="nama" placeholder="Nama" required>
+          <input type="email" id="email" placeholder="Email" required>
+          <input type="text" id="username" placeholder="Username" required>
+          <input type="password" id="password" placeholder="Password" th:if="${userId == null}" required>
+          <input type="text" id="role" placeholder="Role (admin/user)" required>
+          <button type="submit" th:text="${userId != null} ? 'Simpan Perubahan' : 'Tambah User'">Tambah User</button>
+          <button type="button" id="batalBtn">Batal</button>
+        </form>
+      </div>
+    </main>
+  </div>
+  <script>
+    const form = document.getElementById("userForm");
+    const batalBtn = document.getElementById("batalBtn");
+    const userId = document.getElementById("userId").value;
+
+    // Jika edit, ambil data user dan isi form
+    if (userId) {
+      window.onload = async function() {
+        const res = await fetch(`/api/user/${userId}`);
+        const data = await res.json();
+        document.getElementById("nama").value = data.nama;
+        document.getElementById("email").value = data.email;
+        document.getElementById("username").value = data.username;
+        // Jangan isi password saat edit demi keamanan
+        document.getElementById("role").value = data.role;
+      };
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {
+        nama: document.getElementById("nama").value,
+        email: document.getElementById("email").value,
+        username: document.getElementById("username").value,
+        role: document.getElementById("role").value
+      };
+      // Password hanya dikirim saat tambah user
+      if (!userId) {
+        data.password = document.getElementById("password").value;
+      }
+      if (userId) {
+        await fetch(`/api/user/${userId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+      } else {
+        await fetch("/api/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+      }
+      window.location.href = "/admin/user";
+    };
+    batalBtn.onclick = () => window.location.href = "/admin/user";
+  </script>
+</body>
+</html>
