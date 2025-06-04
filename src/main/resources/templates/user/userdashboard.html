@@ -1,33 +1,26 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard Pengguna - PetClinic+</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <script>
-    const role = localStorage.getItem("userRole");
-    if (role !== "user") {
-      alert("Akses ditolak!");
-      window.location.href = "/login.html";
-    }
-  </script>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
   <div class="navbar">
     <div class="logo">PetClinic+</div>
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="#" onclick="localStorage.clear(); window.location.href='/login.html';">Logout</a></li>
+      <li><a th:href="@{/}">Home</a></li>
+      <li><a th:href="@{/logout}">Logout</a></li>
     </ul>
   </div>
 
   <section class="hero">
     <div class="hero-content">
-      <h1>Hai <span>Pengguna</span></h1>
+      <h1>Hai <span th:text="${#authentication.name}">Pengguna</span></h1>
       <p>Selamat datang di PetClinic+! Jelajahi produk dan buat reservasi untuk hewan kesayanganmu.</p>
       <div class="hero-buttons">
-        <a href="/shop.html" class="btn-order">Belanja Produk</a>
-        <a href="/clinic.html" class="btn-contact">Reservasi Klinik</a>
+        <a th:href="@{/produk}" class="btn-order">Belanja Produk</a>
+        <a th:href="@{/reservasi}" class="btn-contact">Reservasi Klinik</a>
       </div>
     </div>
     <div class="hero-image">

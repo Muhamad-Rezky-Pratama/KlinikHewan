@@ -1,21 +1,20 @@
-<!-- Contoh login.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <title>Login - PetClinic+</title>
+  <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
+  <div class="login-box">
     <h2>Login</h2>
     <form th:action="@{/login}" method="post">
-    <input type="email" name="username" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Password" required />
-    <button type="submit">Login</button>
-    <p th:if="${param.error}" style="color:red;">Email atau password salah.</p>
-  </form>
-    <form th:action="@{/register}" method="get" style="margin-top:10px;">
-        <button type="submit">Register</button>
+      <input type="email" name="username" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+      <p th:if="${param.error}" style="color:red; text-align:center;">Email atau password salah.</p>
     </form>
+    <a th:href="@{/register}">Belum punya akun? Register</a>
+  </div>
 </body>
 </html>

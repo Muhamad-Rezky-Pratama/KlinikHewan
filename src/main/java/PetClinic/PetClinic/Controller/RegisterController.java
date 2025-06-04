@@ -1,4 +1,3 @@
-
 package PetClinic.PetClinic.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +26,21 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-public String processRegister(@RequestParam String username,
-                              @RequestParam String email,
-                              @RequestParam String password,
-                              Model model) {
-    if (userRepo.findByEmail(email) != null) {
-        model.addAttribute("error", "Email sudah terdaftar.");
+    public String processRegister(@RequestParam String username,
+                                  @RequestParam String email,
+                                  @RequestParam String password,
+                                  Model model) {
+        if (userRepo.findByEmail(email) != null) {
+            model.addAttribute("error", "Email sudah terdaftar.");
+            return "register";
+        }
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole("user");
+        userRepo.save(user);
+        model.addAttribute("success", "Registrasi berhasil! Silakan login.");
         return "register";
-    }
-    User user = new User();
-    user.setUsername(username);
-    user.setEmail(email);
-    user.setPassword(passwordEncoder.encode(password));
-    user.setRole("user");
-    userRepo.save(user);
-    model.addAttribute("success", "Registrasi berhasil! Silakan login.");
-    return "register";
     }
 }
