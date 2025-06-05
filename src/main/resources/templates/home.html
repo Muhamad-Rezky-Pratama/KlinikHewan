@@ -1,24 +1,102 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <title>PetClinic+ Home</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <title>PetClinic - Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <div class="navbar-brand">PetClinic+</div>
-      <div class="navbar-menu">
-        <a th:href="@{/login}" class="navbar-link">Login</a>
-      </div>
-    </nav>
-  </header>
-  <main>
-    <section class="hero">
-      <h1>Selamat Datang di PetClinic+</h1>
-      <p>Klinik hewan terpercaya untuk kesehatan hewan peliharaan Anda.</p>
+
+
+    <div class="container">
+
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="logo">PetClinic+</div>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/clinic}">Clinic</a></li>
+                <li><a th:href="@{/shop}">Shop</a></li>
+                <li><a th:href="@{/login}">Login</a></li>
+            </ul>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Complete <span>Care</span> & <span>Comfort</span> for Your Pets</h1>
+                <p>Kami menyediakan layanan klinik hewan profesional & produk terbaik untuk peliharaan kesayangan Anda.</p>
+                <div class="hero-buttons">
+                    <a th:href="@{/reservasi}">Reservasi</a>
+                    <a th:href="@{/shop}">Lihat Produk</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img th:src="@{/image/CatWFood.png}" alt="CatWFood" />
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Clinic Services -->
+    <section class="clinic-services">
+        <div class="container">
+            <h2>Layanan Klinik Kami</h2>
+            <div class="product-list">
+                <div class="product-card">
+                    <img src="/image/Vaccin.png" alt="Vaksinasi">
+                    <h3>Vaksinasi</h3>
+                    <span>Paket vaksin lengkap & aman</span>
+                </div>
+                <div class="product-card">
+                    <img src="/image/check.png" alt="Pemeriksaan">
+                    <h3>Periksa Kesehatan</h3>
+                    <span>Konsultasi & diagnosa dokter hewan</span>
+                </div>
+                <div class="product-card">
+                    <img src="/image/Groom.png" alt="Grooming">
+                    <h3>Grooming</h3>
+                    <span>Mandi, potong kuku, & perawatan bulu</span>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
+
+    <!-- Produk Section -->
+    <section class="products">
+        <div class="container">
+            <h2>Produk Populer</h2>
+            <div class="product-list">
+                <div class="product-card">
+                    <img src="image/product1.png" alt="Whiskas Cat Food">
+                    <h3>Whiskas Cat Food</h3>
+                    <span>Rp90.000</span>
+                </div>
+                <div class="product-card">
+                    <img src="image/product2.png" alt="Royal Canin Cat Food">
+                    <h3>Royal Canin Cat Food</h3>
+                    <span>Rp85.000</span>
+                </div>
+                <div class="product-card">
+                    <img src="image/product3.png" alt="Royal Canin Dog Food">
+                    <h3>Royal Canin Dog Food</h3>
+                    <span>Rp99.000</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+         <div class="container">
+            <div class="footer-content">
+             <p>🐾 Terima kasih telah merawat hewan kesayanganmu bersama <strong>PetClinic+</strong></p>
+              <p>📍 Bandung | ☎ 0812-3456-7890 | ✉️ petclinic@gmail.com</p>
+              <p class="footer-small">© 2025 PetClinic+. All rights reserved.</p>
+             </div>
+        </div>
+    </footer>
+
+
 </body>
 </html>

@@ -5,30 +5,32 @@
   <title th:text="${userId != null} ? 'Edit User' : 'Tambah User'">Form User</title>
   <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
   <style>
-    .form-container {
-      max-width: 520px;
-      margin: 48px auto 0 auto;
-      background: #fff;
-      padding: 32px 28px 24px 28px;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px #0001;
-    }
-    #userForm input[type="text"],
-    #userForm input[type="email"],
-    #userForm input[type="password"] {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-    #userForm button[type="submit"], #userForm button[type="button"] {
-      width: auto;
-      display: inline-block;
-      margin-right: 10px;
-    }
+  .form-container {
+    max-width: 520px;
+    margin: 48px auto 0 auto;
+    background: #fff;
+    padding: 32px 28px 24px 28px;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #0001;
+  }
+  #userForm input[type="text"],
+  #userForm input[type="email"],
+  #userForm input[type="password"],
+  #userForm select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+  }
+  #userForm button[type="submit"], #userForm button[type="button"] {
+    width: auto;
+    display: inline-block;
+    margin-right: 10px;
+  }
   </style>
 </head>
 <body>
@@ -47,16 +49,19 @@
     <main class="dashboard-content">
       <div class="form-container">
         <h2 th:text="${userId != null} ? 'Edit User' : 'Tambah User'">Form User</h2>
-        <form id="userForm">
-          <input type="hidden" id="userId" th:value="${userId}">
-          <input type="text" id="nama" placeholder="Nama" required>
-          <input type="email" id="email" placeholder="Email" required>
-          <input type="text" id="username" placeholder="Username" required>
-          <input type="password" id="password" placeholder="Password" th:if="${userId == null}" required>
-          <input type="text" id="role" placeholder="Role (admin/user)" required>
-          <button type="submit" th:text="${userId != null} ? 'Simpan Perubahan' : 'Tambah User'">Tambah User</button>
-          <button type="button" id="batalBtn">Batal</button>
-        </form>
+       <form id="userForm">
+      <input type="hidden" id="userId" th:value="${userId}">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" th:if="${userId == null}" required>
+      <select id="role" required>
+        <option value="">Pilih Role</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+      </select>
+      <button type="submit" th:text="${userId != null} ? 'Simpan Perubahan' : 'Tambah User'">Tambah User</button>
+      <button type="button" id="batalBtn">Batal</button>
+    </form>
       </div>
     </main>
   </div>
@@ -70,7 +75,6 @@
       window.onload = async function() {
         const res = await fetch(`/api/user/${userId}`);
         const data = await res.json();
-        document.getElementById("nama").value = data.nama;
         document.getElementById("email").value = data.email;
         document.getElementById("username").value = data.username;
         // Jangan isi password saat edit demi keamanan
@@ -81,7 +85,6 @@
     form.onsubmit = async (e) => {
       e.preventDefault();
       const data = {
-        nama: document.getElementById("nama").value,
         email: document.getElementById("email").value,
         username: document.getElementById("username").value,
         role: document.getElementById("role").value

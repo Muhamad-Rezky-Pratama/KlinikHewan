@@ -27,4 +27,13 @@ public class HomeController {
         }
         return "home";
     }
+    @GetMapping("/shop")
+        public String shopPage() {
+            return "shop";
+        }
+
+        @GetMapping("/clinic")
+        public String clinicPage() {
+            return "clinic";
+        }
 }
