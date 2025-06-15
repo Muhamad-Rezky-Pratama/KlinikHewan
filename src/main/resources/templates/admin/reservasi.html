@@ -1,9 +1,104 @@
 <!DOCTYPE html>
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
+<head>  <meta charset="UTF-8">
   <title>Kelola Reservasi</title>
   <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      width: 300px;
+      font-size: 14px;
+    }
+
+    .btn-tambah {
+      background-color: #6a3fa0;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .btn-tambah:hover {
+      background-color: #8b5cc5;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .data-table th {
+      background-color: #6a3fa0;
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .data-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .data-table tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .btn-edit, .btn-hapus {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+
+    .btn-edit {
+      background-color: #6a3fa0;
+      color: white;
+    }
+
+    .btn-hapus {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background-color: #8b5cc5;
+    }
+
+    .btn-hapus:hover {
+      background-color: #c82333;
+    }
+  </style>
 </head>
 <body>
   <div class="admin-layout">
@@ -17,24 +112,30 @@
         <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
         <a th:href="@{/logout}">Logout</a>
       </nav>
-    </aside>
-    <main class="dashboard-content">
-      <h2>Manajemen Reservasi</h2>
-      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah Reservasi</button>
-      <input type="text" id="searchInput" placeholder="Cari nama hewan, layanan, dokter..." style="margin:16px 0 0 0; width:250px;">
-      <hr>
-      <table border="1" width="100%">
-        <thead>
-          <tr>
-            <th>User ID</th>
-            <th>Hewan</th>
-            <th>Layanan</th>
-            <th>Tanggal</th>
-            <th>Catatan</th>
-            <th>Dokter</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
+    </aside>    <main class="dashboard-content">
+      <div class="content-header">
+        <h2>Manajemen Reservasi</h2>
+        <div class="actions">
+          <input type="text" id="searchInput" class="search-input" placeholder="Cari nama hewan, layanan, dokter...">
+          <button id="tambahBtn" type="button" class="btn-tambah">
+            <i class="fas fa-plus"></i> Tambah Reservasi
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Nama Pemilik</th>
+              <th>Hewan</th>
+              <th>Layanan</th>
+              <th>Tanggal</th>
+              <th>Catatan</th>
+              <th>Dokter</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
         <tbody id="tbody"></tbody>
       </table>
     </main>
@@ -51,22 +152,22 @@
       const res = await fetch("/api/reservasi");
       allData = await res.json();
       renderTable(allData);
-    }
-
-    function renderTable(data) {
+    }    function renderTable(data) {
       tbody.innerHTML = "";
       data.forEach(r => {
+        const userId = r.userId || r.user?.id || '-';
         tbody.innerHTML += `
           <tr>
-            <td>${r.userId}</td>
-            <td>${r.namaHewan}</td>
-            <td>${r.jenisLayanan}</td>
-            <td>${r.tanggal}</td>
-            <td>${r.catatan}</td>
-            <td>${r.dokter}</td>
+            <td>${userId}</td>
+            <td>${r.namaPemilik || '-'}</td>
+            <td>${r.namaHewan || '-'}</td>
+            <td>${r.jenisLayanan || '-'}</td>
+            <td>${r.tanggal || '-'}</td>
+            <td>${r.catatan || '-'}</td>
+            <td>${r.dokter || '-'}</td>
             <td>
-              <button type="button" onclick="editReservasi(${r.id})">Edit</button>
-              <button type="button" onclick="hapusReservasi(${r.id})">Hapus</button>
+              <button type="button" class="btn-edit" onclick="editReservasi(${r.id})">Edit</button>
+              <button type="button" class="btn-hapus" onclick="hapusReservasi(${r.id})">Hapus</button>
             </td>
           </tr>
         `;

@@ -6,30 +6,38 @@
   <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
   <style>
     .form-container {
-      max-width: 520px;
-      margin: 48px auto 0 auto;
-      background: #fff;
-      padding: 32px 28px 24px 28px;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px #0001;
+        max-width: 520px;
+        margin: 48px auto 0 auto;
+        background: #fff;
+        padding: 32px 28px 24px 28px;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px #0001;
     }
+    /* Tambahkan styling untuk select */
+    #reservasiForm select,
     #reservasiForm input[type="text"],
-    #reservasiForm input[type="number"],
     #reservasiForm input[type="date"] {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      margin-bottom: 16px;
-      box-sizing: border-box;
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        background-color: #fff;
     }
-    #reservasiForm button[type="submit"], #reservasiForm button[type="button"] {
-      width: auto;
-      display: inline-block;
-      margin-right: 10px;
+    #reservasiForm button[type="submit"], 
+    #reservasiForm button[type="button"] {
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+        background: #5e3b76;
+        color: white;
+        cursor: pointer;
+        margin-right: 10px;
     }
-  </style>
+</style>
+
 </head>
 <body>
   <div class="admin-layout">
@@ -46,66 +54,118 @@
     </aside>
     <main class="dashboard-content">
       <div class="form-container">
-        <h2 th:text="${reservasiId != null} ? 'Edit Reservasi' : 'Tambah Reservasi'">Form Reservasi</h2>
-        <form id="reservasiForm">
-          <input type="hidden" id="reservasiId" th:value="${reservasiId}">
-          <input type="number" id="userId" placeholder="User ID" required>
-          <input type="text" id="namaHewan" placeholder="Nama Hewan" required>
-          <input type="text" id="jenisLayanan" placeholder="Jenis Layanan" required>
-          <input type="date" id="tanggal" required>
-          <input type="text" id="catatan" placeholder="Catatan">
-          <input type="text" id="dokter" placeholder="Dokter">
-          <button type="submit" th:text="${reservasiId != null} ? 'Simpan Perubahan' : 'Tambah Reservasi'">Tambah Reservasi</button>
-          <button type="button" id="batalBtn">Batal</button>
-        </form>
-      </div>
-    </main>
-  </div>
-  <script>
-    const form = document.getElementById("reservasiForm");
-    const batalBtn = document.getElementById("batalBtn");
-    const reservasiId = document.getElementById("reservasiId").value;
+  <h2 th:text="${reservasiId != null} ? 'Edit Reservasi' : 'Tambah Reservasi'">Form Reservasi</h2>
+  <form id="reservasiForm">
+    <input type="hidden" id="reservasiId" th:value="${reservasiId}">
+      <!-- Ganti input userId menjadi select -->
+    <select id="userId" required>
+      <option value="">Pilih Pemilik Hewan</option>
+    </select>
 
-    // Jika edit, ambil data reservasi dan isi form
-    if (reservasiId) {
-      window.onload = async function() {
-        const res = await fetch(`/api/reservasi/${reservasiId}`);
-        const data = await res.json();
-        document.getElementById("userId").value = data.userId;
-        document.getElementById("namaHewan").value = data.namaHewan;
-        document.getElementById("jenisLayanan").value = data.jenisLayanan;
-        document.getElementById("tanggal").value = data.tanggal;
-        document.getElementById("catatan").value = data.catatan;
-        document.getElementById("dokter").value = data.dokter;
-      };
+    <input type="text" id="namaPemilik" placeholder="Nama Pemilik" required>
+    <input type="text" id="namaHewan" placeholder="Nama Hewan" required>
+    
+    <!-- Ganti input jenisLayanan menjadi select -->
+    <select id="jenisLayanan" required>
+      <option value="">Pilih Jenis Layanan</option>
+      <option value="Vaksinasi">Vaksinasi</option>
+      <option value="Pemeriksaan">Pemeriksaan Umum</option>
+      <option value="Grooming">Grooming</option>
+      <option value="Sterilisasi">Sterilisasi</option>
+    </select>
+
+    <input type="date" id="tanggal" required>
+    <input type="text" id="catatan" placeholder="Catatan">
+    
+    <!-- Ganti input dokter menjadi select -->
+    <select id="dokter" required>
+      <option value="">Pilih Dokter</option>
+      <option value="Dr. Rika">Dr. Rika</option>
+      <option value="Dr. Bayu">Dr. Bayu</option>
+      <option value="Dr. Amanda">Dr. Amanda</option>
+    </select>
+
+    <button type="submit" th:text="${reservasiId != null} ? 'Simpan Perubahan' : 'Tambah Reservasi'">
+      Tambah Reservasi
+    </button>
+    <button type="button" id="batalBtn">Batal</button>
+  </form>
+</div>
+
+<script>
+const form = document.getElementById("reservasiForm");
+const batalBtn = document.getElementById("batalBtn");
+const reservasiId = document.getElementById("reservasiId")?.value;
+
+window.onload = async function() {
+    try {
+        // Load users
+        const usersRes = await fetch("/api/user");
+        if (!usersRes.ok) throw new Error('Failed to fetch users');
+        const users = await usersRes.json();
+        
+        const userSelect = document.getElementById("userId");
+        userSelect.innerHTML = '<option value="">Pilih Pemilik Hewan</option>';
+        users.forEach(user => {
+            userSelect.innerHTML += `
+                <option value="${user.id}">${user.username}</option>
+            `;
+        });
+
+        // If editing, load existing data
+        if (reservasiId) {
+            const res = await fetch(`/api/reservasi/${reservasiId}`);
+            if (!res.ok) throw new Error('Failed to fetch reservation');
+            const data = await res.json();
+              if (data.user) document.getElementById("userId").value = data.user.id;
+            if (data.namaPemilik) document.getElementById("namaPemilik").value = data.namaPemilik;
+            if (data.namaHewan) document.getElementById("namaHewan").value = data.namaHewan;
+            if (data.jenisLayanan) document.getElementById("jenisLayanan").value = data.jenisLayanan;
+            if (data.tanggal) document.getElementById("tanggal").value = data.tanggal.split('T')[0];
+            if (data.catatan) document.getElementById("catatan").value = data.catatan;
+            if (data.dokter) document.getElementById("dokter").value = data.dokter;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat memuat data');
     }
+};
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const data = {
-        userId: document.getElementById("userId").value,
-        namaHewan: document.getElementById("namaHewan").value,
-        jenisLayanan: document.getElementById("jenisLayanan").value,
-        tanggal: document.getElementById("tanggal").value,
-        catatan: document.getElementById("catatan").value,
-        dokter: document.getElementById("dokter").value
-      };
-      if (reservasiId) {
-        await fetch(`/api/reservasi/${reservasiId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+form.onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const userId = document.getElementById("userId").value;
+        if (!userId) {
+            alert('Silakan pilih pemilik hewan');
+            return;
+        }        const data = {
+            user: { id: parseInt(userId) },
+            namaPemilik: document.getElementById("namaPemilik").value,
+            namaHewan: document.getElementById("namaHewan").value,
+            jenisLayanan: document.getElementById("jenisLayanan").value,
+            tanggal: document.getElementById("tanggal").value,
+            catatan: document.getElementById("catatan").value || '',
+            dokter: document.getElementById("dokter").value
+        };
+
+        const url = reservasiId ? `/api/reservasi/${reservasiId}` : "/api/reservasi";
+        const method = reservasiId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
         });
-      } else {
-        await fetch("/api/reservasi", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-      }
-      window.location.href = "/admin/reservasi";
-    };
-    batalBtn.onclick = () => window.location.href = "/admin/reservasi";
-  </script>
+
+        if (!response.ok) throw new Error('Failed to save reservation');
+        window.location.href = "/admin/reservasi";
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan data');
+    }
+};
+
+batalBtn.onclick = () => window.location.href = "/admin/reservasi";
+</script>
 </body>
 </html>

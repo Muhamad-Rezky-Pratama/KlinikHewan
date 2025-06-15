@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Keranjang Belanja - PetClinic+</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/shop.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="logo">PetClinic+</div>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/clinic}">Clinic</a></li>
+                <li><a th:href="@{/shop}">Shop</a></li>
+                <li class="cart-icon">
+                    <a href="#" id="cartButton" class="active">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </li>
+                <li th:if="${loggedInUser == null}"><a th:href="@{/login}">Login</a></li>
+                <li th:if="${loggedInUser != null}" class="user-profile">
+                    <a href="#" class="avatar-link" id="userMenuButton">
+                        <i class="fas fa-user-circle"></i>
+                        <span th:text="${loggedInUser}"></span>
+                    </a>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <a th:href="@{/user/userdashboard}" th:if="${userRole == 'USER'}">
+                            <i class="fas fa-user"></i> Dashboard
+                        </a>
+                        <a th:href="@{/admin/admindashboard}" th:if="${userRole == 'ADMIN'}">
+                            <i class="fas fa-user-cog"></i> Admin Panel
+                        </a>
+                        <a th:href="@{/logout}" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <section class="cart-page">
+        <div class="container">
+            <div class="section-title">
+                <h2>Keranjang Belanja</h2>
+                <p>Review dan checkout pesanan Anda</p>
+            </div>
+
+            <div class="cart-container">
+                <div class="cart-items">
+                    <!-- Items will be dynamically added here -->
+                </div>                <div class="cart-summary">
+                    <h3>Ringkasan Pesanan</h3>
+                    <div class="summary-item">
+                        <span>Jumlah Barang:</span>
+                        <span id="totalItems">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Total Belanja:</span>
+                        <span id="cartTotal">Rp 0</span>
+                    </div>
+                    <button id="checkoutBtn" class="checkout-btn">
+                        <i class="fas fa-shopping-bag"></i>
+                        Lanjutkan ke Pembayaran
+                    </button>
+                    <a href="/shop" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i>
+                        Kembali Berbelanja
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>🐾 Terima kasih telah merawat hewan kesayanganmu bersama <strong>PetClinic+</strong></p>
+                <p>📍 Bandung | ☎ 0812-3456-7890 | ✉️ petclinic@example.com</p>
+                <p class="footer-small">© 2025 PetClinic+. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartItems = document.querySelector('.cart-items');
+            const cartCount = document.querySelector('.cart-count');
+            const cartTotal = document.getElementById('cartTotal');
+            const totalItems = document.getElementById('totalItems');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            let cart = [];
+
+            // Load cart from localStorage
+            function loadCart() {
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                    updateCartDisplay();
+                }
+            }
+
+            function updateCartDisplay() {
+                cartItems.innerHTML = '';
+                let total = 0;
+                let itemCount = 0;
+
+                if (cart.length === 0) {                    cartItems.innerHTML = `
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Keranjang belanja Anda masih kosong</p>
+                            <a href="/shop" class="btn-primary">Ayo Mulai Belanja</a>
+                        </div>
+                    `;
+                } else {
+                    cart.forEach(item => {
+                        total += item.price * item.quantity;
+                        itemCount += item.quantity;
+
+                        cartItems.innerHTML += `
+                            <div class="cart-item" data-id="${item.id}">
+                                <img src="${item.image}" alt="${item.name}">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-name">${item.name}</div>
+                                    <div class="cart-item-price">Rp ${item.price.toLocaleString()}</div>
+                                    <div class="cart-item-quantity">
+                                        <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                                        <span>${item.quantity}</span>
+                                        <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                                    </div>
+                                </div>
+                                <button onclick="removeItem(${item.id})" class="remove-item">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+
+                cartCount.textContent = itemCount;
+                totalItems.textContent = itemCount;
+                cartTotal.textContent = `Rp ${total.toLocaleString()}`;
+            }
+
+            // Initialize user dropdown functionality
+            const userMenuButton = document.querySelector('.avatar-link');
+            const userDropdown = document.querySelector('.dropdown-menu');
+            
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userDropdown.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+
+            // Make functions available globally
+            window.updateQuantity = function(id, change) {
+                const item = cart.find(item => item.id === id);
+                if (item) {
+                    item.quantity += change;
+                    if (item.quantity <= 0) {
+                        removeItem(id);
+                    } else {
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        updateCartDisplay();
+                    }
+                }
+            };
+
+            window.removeItem = function(id) {
+                cart = cart.filter(item => item.id !== id);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartDisplay();
+            };            checkoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    alert('Maaf, keranjang belanja Anda masih kosong!');
+                    return;
+                }
+                
+                const isLoggedIn = document.querySelector('.user-profile') !== null;
+                if (!isLoggedIn) {
+                    alert('Mohon login terlebih dahulu untuk melanjutkan ke pembayaran');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Here you would typically send the cart data to your backend
+                alert('Terima kasih telah berbelanja di PetClinic+!\nPesanan Anda akan segera diproses.');
+                cart = [];
+                localStorage.removeItem('cart');
+                updateCartDisplay();
+            });
+
+            // Load cart when page loads
+            loadCart();
+        });
+    </script>
+</body>
+</html>

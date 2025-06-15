@@ -2,22 +2,167 @@
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>Register</title>
+  <title>Register - PetClinic+</title>
   <link rel="stylesheet" th:href="@{/css/login.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-  <div class="register-box">
-      <h2>Register</h2>
-    <form th:action="@{/register}" method="post">
-    <input type="text" name="username" placeholder="Username" required />
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Password" required />
-    <button type="submit">Daftar</button>
-    <p th:if="${error}" th:text="${error}" style="color:red"></p>
-    <p th:if="${success}" th:text="${success}" style="color:green"></p>
-</form>
-    <a th:href="@{/login}">Sudah punya akun? Login</a>
+  <div class="login-box">
+    <h2>🐾 Register</h2>
+    <form th:action="@{/register}" method="post" id="registerForm" onsubmit="return validateRegister()" novalidate>
+      
+      <div class="input-group">
+        <input type="text" name="username" id="username" placeholder="Username" required />
+        <small class="error-text">Username harus 4-20 karakter (huruf, angka, underscore).</small>
+      </div>
+      
+      <div class="input-group">
+        <input type="email" name="email" id="email" placeholder="Email" required />
+        <small class="error-text">Format email tidak valid.</small>
+      </div>
+      
+      <div class="input-group">
+        <input type="password" name="password" id="password" placeholder="Password" required />
+        <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+        <small class="error-text">Password minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.</small>
+      </div>
+      
+      <button type="submit" class="login-button">
+        <i class="fas fa-user-plus"></i>
+        Daftar
+      </button>
+      
+      <p th:if="${error}" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+      </p>
+      <p th:if="${success}" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+      </p>
+      
+    </form>
+    <a th:href="@{/login}">
+      <i class="fas fa-sign-in-alt"></i>
+      Sudah punya akun? Login
+    </a>
   </div>
+
+  <script>
+    const patterns = {
+      username: /^[a-zA-Z0-9_]{4,20}$/,
+      email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/
+    };
+    
+    function showError(input) {
+      input.classList.remove('valid-input');
+      input.classList.add('invalid-input');
+    }
+
+    function showSuccess(input) {
+      input.classList.remove('invalid-input');
+      input.classList.add('valid-input');
+    }
+
+    function resetValidation(input) {
+        input.classList.remove('valid-input', 'invalid-input');
+    }
+
+    function validateRegister() {
+      const username = document.getElementById('username');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      let isFormValid = true;
+
+      if (!patterns.username.test(username.value)) {
+        showError(username);
+        isFormValid = false;
+      } else {
+        showSuccess(username);
+      }
+
+      if (!patterns.email.test(email.value)) {
+        showError(email);
+        isFormValid = false;
+      } else {
+        showSuccess(email);
+      }
+
+      if (!patterns.password.test(password.value)) {
+        showError(password);
+        isFormValid = false;
+      } else {
+        showSuccess(password);
+      }
+      
+      return isFormValid;
+    }
+
+    // --- Event Listeners ---
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    usernameInput.addEventListener('input', function() {
+        if (patterns.username.test(this.value)) showSuccess(this); else showError(this);
+    });
+
+    emailInput.addEventListener('input', function() {
+        if (patterns.email.test(this.value)) showSuccess(this); else showError(this);
+    });
+
+    passwordInput.addEventListener('input', function() {
+        if (patterns.password.test(this.value)) showSuccess(this); else showError(this);
+    });
+    
+    document.querySelectorAll('.input-group input').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                resetValidation(this);
+            }
+        });
+    });
+
+    // Fungsionalitas Show/Hide Password
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+      passwordInput.focus();
+    });
+    
+    togglePassword.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+    });
+
+    // --- PENAMBAHAN KODE UNTUK TOMBOL ENTER ---
+
+    // Dari Username -> Email
+    usernameInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            emailInput.focus();
+        }
+    });
+
+    // Dari Email -> Password
+    emailInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            passwordInput.focus();
+        }
+    });
+
+    // Dari Password -> Klik tombol Daftar
+    passwordInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            document.querySelector('.login-button').click();
+        }
+    });
+  </script>
 </body>
 </html>

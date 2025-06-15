@@ -16,8 +16,7 @@ public class HomeController {
     @Autowired
     private UserRepository userRepo;
 
-    @GetMapping("/")
-    public String home(Model model, Principal principal) {
+    private void addUserToModel(Model model, Principal principal) {
         if (principal != null) {
             User user = userRepo.findByEmail(principal.getName());
             if (user != null) {
@@ -25,15 +24,17 @@ public class HomeController {
                 model.addAttribute("userRole", user.getRole());
             }
         }
+    }
+
+    @GetMapping("/")
+    public String home(Model model, Principal principal) {
+        addUserToModel(model, principal);
         return "home";
     }
-    @GetMapping("/shop")
-        public String shopPage() {
-            return "shop";
-        }
 
-        @GetMapping("/clinic")
-        public String clinicPage() {
-            return "clinic";
-        }
+    @GetMapping("/clinic")
+    public String clinicPage(Model model, Principal principal) {
+        addUserToModel(model, principal);
+        return "clinic";
+    }
 }

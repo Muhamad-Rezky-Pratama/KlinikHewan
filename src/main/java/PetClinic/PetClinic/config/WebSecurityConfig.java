@@ -21,21 +21,26 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
+        http            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                // Public pages and resources
                 .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/image/**").permitAll()
+                .requestMatchers("/clinic", "/shop").permitAll()
+                // Admin routes
                 .requestMatchers("/admin/**").hasRole("admin")
+                // Protected actions
+                .requestMatchers("/reservasi/**").authenticated()
+                .requestMatchers("/shop/checkout/**", "/shop/cart/**").authenticated()
                 .requestMatchers("/user/**").hasRole("user")
+                // All other requests need authentication
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .successHandler(customLoginSuccessHandler) // Pakai handler custom
                 .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout")
+            )            .logout(logout -> logout
+                .logoutSuccessUrl("/")
                 .permitAll()
             );
         return http.build();

@@ -12,9 +12,10 @@
       padding: 32px 28px 24px 28px;
       border-radius: 12px;
       box-shadow: 0 2px 16px #0001;
-    }
-    #produkForm input[type="text"],
-    #produkForm input[type="number"] {
+    }    #produkForm input[type="text"],
+    #produkForm input[type="number"],
+    #produkForm input[type="file"],
+    #produkForm select {
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
@@ -62,11 +63,18 @@
         <form id="produkForm">
           <input type="hidden" id="produkId" th:value="${produkId}">
           <input type="text" id="nama" placeholder="Nama Produk" required>
-          <input type="text" id="deskripsi" placeholder="Deskripsi" required>
-          <input type="number" id="harga" placeholder="Harga" required step="0.01">
-          <input type="text" id="gambar" placeholder="Link Gambar" required>
-          <input type="text" id="lokasi" placeholder="Lokasi" required>
-          <input type="text" id="kategori" placeholder="Kategori" required>
+          <input type="text" id="deskripsi" placeholder="Deskripsi" required>          <input type="number" id="harga" placeholder="Harga" required step="0.01">          <div class="image-preview-container">
+            <input type="file" id="gambarFile" accept="image/*">
+            <input type="hidden" id="gambar" name="gambar">
+            <img id="imagePreview" src="#" alt="Preview" style="display: none; max-width: 200px; margin-top: 10px;">
+            <div id="currentImage" style="margin-top: 10px;"></div>
+          </div>
+          <input type="text" id="lokasi" placeholder="Lokasi" required><select id="kategori" required>
+            <option value="">Pilih Kategori</option>
+            <option value="cat-food">Makanan Kucing</option>
+            <option value="dog-food">Makanan Anjing</option>
+            <option value="grooming">Perawatan</option>
+          </select>
           <input type="number" id="stok" placeholder="Stok" required>
           <button type="submit" th:text="${produkId != null} ? 'Simpan Perubahan' : 'Tambah Produk'">Tambah Produk</button>
           <button type="button" id="batalBtn">Batal</button>
@@ -77,9 +85,7 @@
   <script>
     const form = document.getElementById("produkForm");
     const batalBtn = document.getElementById("batalBtn");
-    const produkId = document.getElementById("produkId").value;
-
-    // Jika edit, ambil data produk dan isi form
+    const produkId = document.getElementById("produkId").value;    // Jika edit, ambil data produk dan isi form
     if (produkId) {
       window.onload = async function() {
         const res = await fetch(`/api/produk/${produkId}`);
@@ -88,37 +94,112 @@
         document.getElementById("deskripsi").value = data.deskripsi;
         document.getElementById("harga").value = data.harga;
         document.getElementById("gambar").value = data.gambar;
+        
+        if (data.gambar) {
+          const currentImage = document.getElementById("currentImage");
+          currentImage.innerHTML = `
+            <p>Current image:</p>
+            <img src="${data.gambar}" alt="Current" style="max-width: 200px; margin-top: 10px;">
+          `;
+          document.getElementById("gambarFile").required = false;
+        } else {
+          document.getElementById("gambarFile").required = true;
+        }
         document.getElementById("lokasi").value = data.lokasi;
         document.getElementById("kategori").value = data.kategori;
         document.getElementById("stok").value = data.stok;
       };
-    }
-
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const data = {
-        nama: document.getElementById("nama").value,
-        deskripsi: document.getElementById("deskripsi").value,
-        harga: parseFloat(document.getElementById("harga").value),
-        gambar: document.getElementById("gambar").value,
-        lokasi: document.getElementById("lokasi").value,
-        kategori: document.getElementById("kategori").value,
-        stok: parseInt(document.getElementById("stok").value)
-      };
-      if (produkId) {
-        await fetch(`/api/produk/${produkId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-      } else {
-        await fetch("/api/produk", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
+    }    // Handle image preview
+    document.getElementById("gambarFile").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        const imagePreview = document.getElementById("imagePreview");
+        
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = "block";
+        };
+        
+        reader.readAsDataURL(file);
       }
-      window.location.href = "/admin/produk";
+    });
+
+    // Handle image upload
+    async function uploadImage(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      try {
+        console.log('Uploading file:', file.name);
+        const response = await fetch('/api/upload/image', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Upload failed:', errorText);
+          throw new Error(errorText);
+        }
+        
+        const imagePath = await response.text();
+        console.log('Upload successful, path:', imagePath);
+        return imagePath;
+      } catch (error) {
+        console.error('Upload error:', error);
+        throw new Error('Failed to upload image: ' + error.message);
+      }
+    }    form.onsubmit = async (e) => {
+      e.preventDefault();
+      
+      try {
+        // Handle image upload or use existing image
+        const fileInput = document.getElementById("gambarFile");
+        let imagePath = document.getElementById("gambar").value;
+        
+        // If a new file is selected, upload it
+        if (fileInput.files.length > 0) {
+          try {
+            imagePath = await uploadImage(fileInput.files[0]);
+            console.log("New image uploaded:", imagePath);
+          } catch (uploadError) {
+            console.error("Image upload failed:", uploadError);
+            alert("Failed to upload image: " + uploadError.message);
+            return;
+          }
+        } else if (!imagePath && !produkId) {
+          // If no file selected and not editing, require an image
+          alert("Please select an image file");
+          return;
+        }
+        
+        const data = {
+          nama: document.getElementById("nama").value,
+          deskripsi: document.getElementById("deskripsi").value,
+          harga: parseFloat(document.getElementById("harga").value),
+          gambar: imagePath, // This will be either the new uploaded path or the existing path
+          lokasi: document.getElementById("lokasi").value,
+          kategori: document.getElementById("kategori").value,
+          stok: parseInt(document.getElementById("stok").value)
+        };
+
+        console.log("Saving product with data:", data);
+
+        const response = await fetch(produkId ? `/api/produk/${produkId}` : "/api/produk", {
+          method: produkId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save product');
+        }
+
+        window.location.href = "/admin/produk";
+      } catch (error) {
+        alert(error.message);
+      }
     };
     batalBtn.onclick = () => window.location.href = "/admin/produk";
   </script>

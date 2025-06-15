@@ -17,15 +17,12 @@
         <a th:href="@{/admin/pembelian}" class="active">Kelola Pembelian</a>
         <a th:href="@{/logout}">Logout</a>
       </nav>
-    </aside>
-    <main class="dashboard-content">
+    </aside>    <main class="dashboard-content">
       <h2>Manajemen Pembelian</h2>
-      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah Pembelian</button>
       <hr>
       <table border="1" width="100%">
-        <thead>
-          <tr>
-            <th>Produk ID</th>
+        <thead>          <tr>
+            <th>Nama Produk</th>
             <th>Nama Pembeli</th>
             <th>Jumlah</th>
             <th>Total</th>
@@ -36,22 +33,17 @@
         <tbody id="tabelPembelian"></tbody>
       </table>
     </main>
-  </div>
-  <script>
+  </div>  <script>
     const tabel = document.getElementById("tabelPembelian");
-    const tambahBtn = document.getElementById("tambahBtn");
-
-    tambahBtn.onclick = () => window.location.href = "/admin/pembelian/tambah";
 
     async function loadPembelian() {
       const res = await fetch("/api/pembelian");
       const data = await res.json();
       tabel.innerHTML = "";
       data.forEach(p => {
-        tabel.innerHTML += `
-          <tr>
-            <td>${p.produkId}</td>
-            <td>${p.namaPembeli}</td>
+        tabel.innerHTML += `          <tr>
+            <td>${p.produk ? p.produk.nama : ''}</td>
+            <td>${p.user ? p.user.username : ''}</td>
             <td>${p.jumlah}</td>
             <td>${p.total}</td>
             <td>${p.tanggal ? p.tanggal.replace('T', ' ').slice(0, 16) : ''}</td>

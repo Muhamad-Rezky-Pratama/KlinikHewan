@@ -1,101 +1,148 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>PetShop - PetClinic+</title>
- <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <style>
-    .shop-section {
-      padding: 40px 0;
-      background-color: #fefcff;
-    }
-    .shop-section h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #5e3b76;
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 30px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .product-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      padding: 16px;
-      text-align: center;
-      transition: transform 0.2s;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-    .product-card img {
-      max-width: 100%;
-      height: 150px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
-    .product-card h4 {
-      font-size: 1.1rem;
-      margin: 10px 0 5px;
-      color: #333;
-    }
-    .product-card span {
-      font-weight: bold;
-      color: #5e3b76;
-    }
-    .btn-buy {
-      margin-top: 10px;
-      display: inline-block;
-      padding: 8px 16px;
-      background-color: #6a3fa0;
-      color: white;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    .btn-buy:hover {
-      background-color: #7b52b1;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>PetShop - PetClinic+</title>    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/shop.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
-<body>
-  <div class="container">
+<body>  <div class="container">
+    <!-- Navbar -->
     <div class="navbar">
       <div class="logo">PetClinic+</div>
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/clinic">Clinic</a></li>
-        <li><a href="/shop">Shop</a></li>
-        <li><a href="/login">Login</a></li>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/clinic}">Clinic</a></li>
+        <li><a th:href="@{/shop}" class="active">Shop</a></li>
+        <li class="cart-icon">
+          <a th:href="@{/cart}" id="cartButton">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </a>
+        </li>
+        <li th:if="${loggedInUser == null}"><a th:href="@{/login}">Login</a></li>
+        <li th:if="${loggedInUser != null}" class="user-profile">
+          <a href="#" class="avatar-link" id="userMenuButton">
+            <i class="fas fa-user-circle"></i>
+            <span th:text="${loggedInUser}"></span>
+          </a>
+          <div class="dropdown-menu" id="userDropdown">
+            <a th:href="@{/user/userdashboard}" th:if="${userRole == 'USER'}">
+              <i class="fas fa-user"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/admindashboard}" th:if="${userRole == 'ADMIN'}">
+              <i class="fas fa-user-cog"></i> Admin Panel
+            </a>
+            <a th:href="@{/logout}" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
 
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>PetShop <span>PetClinic+</span></h1>
+      <p>Temukan produk berkualitas untuk hewan kesayangan Anda</p>
+    </div>
+  </section>
+
+  <!-- Carousel Section -->
+  <section class="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item">
+        <img src="/uploads/image1.png" alt="Special Offers">
+        <div class="carousel-caption">
+          <h2>PetClinic+</h2>
+          <p>Temukan produk berkualitas untuk hewan kesayangan Anda!</p>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="/image/diskon1.png" alt="New Arrivals">
+        <div class="carousel-caption">
+          <h2>SPECIAL SALE!!</h2>
+          <p>Diskon hingga 50% untuk produk terpilih</p>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="/uploads/kucing30.png" alt="Best Sellers">
+        <div class="carousel-caption">
+          <h2>Dapatkan Diskon 30%</h2>
+          <p>Produk terlaris pilihan customer</p>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control carousel-prev">❮</button>
+    <button class="carousel-control carousel-next">❯</button>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="container">
+      <div class="section-title">
+        <h2>Kategori Produk</h2>
+        <p>Pilih kategori sesuai kebutuhan hewan kesayangan Anda</p>
+      </div>      <div class="category-grid">        <div class="category-card" data-category="cat-food">
+          <a href="#products" class="category-link">
+            <img src="/image/kucingmakan.png" alt="Cat Food">
+            <div class="category-info">
+              <h3>Makanan Kucing</h3>
+              <p>Makanan kering & basah</p>
+            </div>
+          </a>
+        </div>
+        <div class="category-card" data-category="dog-food">
+          <a href="#products" class="category-link">
+            <img src="/image/anjingmakan1.png" alt="Dog Food">
+            <div class="category-info">
+              <h3>Makanan Anjing</h3>
+              <p>Snack & makanan utama</p>
+            </div>
+          </a>
+        </div>
+        <div class="category-card" data-category="grooming">
+          <a href="#products" class="category-link">
+            <img src="/image/image.png" alt="Pet Care">
+            <div class="category-info">
+              <h3>Perawatan</h3>
+              <p>Grooming & kesehatan</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
   <section class="shop-section">
-    <h2>🛍️ Produk Terbaik untuk Hewan Kesayanganmu</h2>
-    <div class="product-grid">
-      <div class="product-card">
-        <img src="/images/product1.png" alt="Makanan Kucing Basah">
-        <h4>Wet Cat Food</h4>
-        <span>Rp90.000</span>
-        <a href="#" class="btn-buy">Beli Sekarang</a>
-      </div>
-      <div class="product-card">
-        <img src="/images/product2.png" alt="Snack Anjing">
-        <h4>Milk Bone</h4>
-        <span>Rp85.000</span>
-        <a href="#" class="btn-buy">Beli Sekarang</a>
-      </div>
-      <div class="product-card">
-        <img src="/images/product3.png" alt="Sereal Khusus">
-        <h4>Yummy Cereal</h4>
-        <span>Rp99.000</span>
-        <a href="#" class="btn-buy">Beli Sekarang</a>
+    <div class="container">      <div class="section-title">
+        <h2>Produk Unggulan</h2>
+        <p>Produk terbaik untuk hewan kesayangan Anda</p>
+        <button class="reset-filter" id="resetFilter">Tampilkan Semua Produk</button>      </div><div id="products" class="product-grid">
+        <div th:if="${#lists.isEmpty(products)}" class="no-products">
+          <h3>Tidak ada produk yang tersedia saat ini</h3>
+          <p>Silakan coba lagi nanti atau hubungi kami untuk informasi lebih lanjut.</p>
+        </div>
+        <div th:each="product : ${products}" 
+             class="product-card" 
+             th:data-category="${product.kategori}"
+             th:data-id="${product.id}">
+          <div class="product-img">
+            <img th:src="@{${product.gambar != null and !product.gambar.isEmpty() ? product.gambar : '/image/product1.png'}}" th:alt="${product.nama}">
+          </div>
+          <div class="product-info">
+            <h3 th:text="${product.nama}">Product Name</h3>
+            <p th:text="${product.deskripsi}" class="description">Description</p>
+            <span class="price" th:text="${'Rp ' + #numbers.formatDecimal(product.harga, 0, 'COMMA', 0, 'POINT')}">Price</span>
+            <a href="#" class="btn-buy" th:if="${product.stok > 0}">
+              <i class="fas fa-shopping-cart"></i> Beli Sekarang
+            </a>
+            <span class="out-of-stock" th:if="${product.stok == 0}">Stok Habis</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -109,5 +156,430 @@
       </div>
     </div>
   </footer>
+
+  <div id="notification" class="notification"></div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div class="modal-content" style="background: white; width: 400px; margin: 100px auto; padding: 20px; border-radius: 10px; position: relative;">
+      <span class="close-modal" style="position: absolute; right: 10px; top: 10px; cursor: pointer; font-size: 20px;">&times;</span>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #89408c; margin-bottom: 10px;">
+          <i class="fas fa-check-circle" style="color: #4CAF50; margin-right: 10px;"></i>
+          Checkout Berhasil!
+        </h2>
+        <p>Terima kasih sudah berbelanja di PetClinic+</p>
+      </div>
+      <div id="checkoutDetails" style="margin: 20px 0;"></div>
+      <button id="backToShop" class="btn" style="width: 100%; padding: 10px; background: #89408c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <i class="fas fa-home"></i> Kembali ke Beranda
+      </button>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="cart-modal">
+    <div class="cart-content">
+      <div class="cart-header">
+        <h3>Keranjang Belanja</h3>
+        <span class="close-cart">&times;</span>
+      </div>
+      <div class="cart-items">
+        <!-- Items will be dynamically added here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span id="cartTotal">Rp 0</span>
+        </div>
+        <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Product category filter functionality
+        const categoryCards = document.querySelectorAll('.category-card');
+        const productCards = document.querySelectorAll('.product-card');
+        const resetFilterBtn = document.getElementById('resetFilter');        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-card');
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.classList.remove('hidden');
+                } else {
+                    product.classList.add('hidden');
+                }
+            });
+        }
+
+        function resetCategoryStyles() {
+            categoryCards.forEach(card => {
+                card.classList.remove('active-category');
+            });
+        }
+
+        categoryCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = card.dataset.category;
+                resetCategoryStyles();
+                card.classList.add('active-category');
+                filterProducts(category);
+                document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        resetFilterBtn.addEventListener('click', () => {
+            filterProducts('all');
+            resetCategoryStyles();
+        });
+
+        // User dropdown functionality
+        const userMenuButton = document.querySelector('.avatar-link');
+        const userDropdown = document.querySelector('.dropdown-menu');
+        
+        if (userMenuButton && userDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                userDropdown.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+        }        // Carousel functionality
+        const carousel = document.querySelector('.carousel-inner');
+        const items = carousel.querySelectorAll('.carousel-item');
+        const prevBtn = document.querySelector('.carousel-prev');
+        const nextBtn = document.querySelector('.carousel-next');
+        let currentIndex = 0;
+        let isAnimating = false;
+
+        function showSlide(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // Hide all slides
+            items.forEach(item => {
+                item.style.opacity = '0';
+                item.style.visibility = 'hidden';
+            });
+
+            // Show selected slide
+            const targetSlide = items[index];
+            targetSlide.style.visibility = 'visible';
+            
+            // Trigger reflow to ensure transition works
+            targetSlide.offsetHeight;
+            
+            // Fade in the target slide
+            targetSlide.style.opacity = '1';
+
+            // Reset animation flag after transition
+            setTimeout(() => {
+                isAnimating = false;
+            }, 500);
+        }
+
+        // Initialize first slide
+        items[0].style.visibility = 'visible';
+        items[0].style.opacity = '1';
+
+        function goToSlide(index) {
+            if (isAnimating) return;
+            
+            // Update index
+            currentIndex = index;
+            if (currentIndex >= items.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = items.length - 1;
+
+            showSlide(currentIndex);
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            nextSlide();
+            resetTimer();
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            prevSlide();
+            resetTimer();
+        });
+
+        // Auto slide
+        let autoSlide = setInterval(nextSlide, 5000);
+
+        function resetTimer() {
+            clearInterval(autoSlide);
+            autoSlide = setInterval(nextSlide, 5000);
+        }
+
+        // Cart functionality
+        const cartButton = document.getElementById('cartButton');
+        const cartModal = document.getElementById('cartModal');
+        const closeCart = document.querySelector('.close-cart');
+        const cartItems = document.querySelector('.cart-items');
+        const cartCount = document.querySelector('.cart-count');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        let cart = [];
+
+        // Toggle cart modal
+        cartButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            cartModal.style.display = 'block';
+        });
+
+        closeCart.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+        });
+
+        // Add to cart functionality
+        document.querySelectorAll('.btn-buy').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const card = button.closest('.product-card');
+                const img = card.querySelector('img');
+                const product = {
+                    id: parseInt(card.getAttribute('data-id')), // Menggunakan ID asli dari database
+                    name: card.querySelector('h3').textContent,
+                    price: parseInt(card.querySelector('.price').textContent.replace(/\D/g, '')),
+                    image: img.getAttribute('src'), // Menggunakan getAttribute untuk mendapatkan URL lengkap
+                    quantity: 1
+                };
+                
+                // Validasi data sebelum ditambahkan ke cart
+                if (!product.id || isNaN(product.id)) {
+                    console.error('Invalid product ID');
+                    return;
+                }
+                
+                addToCart(product);
+            });
+        });        function addToCart(product) {
+            const existingItem = cart.find(item => item.name === product.name);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push(product);
+            }
+            
+            updateCart();
+            
+            // Show notification
+            const notification = document.getElementById('notification');
+            notification.textContent = 'Produk berhasil ditambahkan ke keranjang!';
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateCart() {
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                const imageUrl = item.image.startsWith('/') ? item.image : '/' + item.image;
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${imageUrl}" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">Rp ${item.price.toLocaleString()}</div>
+                            <div class="cart-item-quantity">
+                                <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button onclick="removeItem(${item.id})" class="remove-item">×</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartTotal.textContent = `Rp ${total.toLocaleString()}`;
+
+            // Save cart to localStorage
+            try {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            } catch (e) {
+                console.error('Error saving cart:', e);
+            }
+        }
+
+        // Load cart from localStorage
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            try {
+                cart = JSON.parse(savedCart);
+                // Validasi format data cart
+                cart = cart.filter(item => 
+                    typeof item.id === 'number' && 
+                    !isNaN(item.id) && 
+                    item.quantity > 0
+                );
+                updateCart();
+            } catch (e) {
+                console.error('Error loading cart:', e);
+                cart = [];
+                localStorage.removeItem('cart');
+            }
+        }
+
+        // Make functions available globally
+        window.updateQuantity = function(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeItem(id);
+                } else {
+                    updateCart();
+                }
+            }
+        };
+
+        window.removeItem = function(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        };
+
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Keranjang belanja kosong!');
+                return;
+            }
+            
+            const isLoggedIn = document.querySelector('.user-profile') !== null;
+            if (!isLoggedIn) {
+                alert('Silakan login terlebih dahulu untuk melakukan checkout.');
+                window.location.href = '/login';
+                return;
+            }
+
+            // Format cart data untuk backend
+            const cartData = cart.map(item => ({
+                productId: item.id,
+                quantity: item.quantity,
+                price: item.price
+            }));
+
+            // Validasi data sebelum dikirim
+            const invalidItems = cartData.filter(item => !item.productId || isNaN(item.productId));
+            if (invalidItems.length > 0) {
+                alert('Terdapat item yang tidak valid dalam keranjang. Silakan refresh halaman dan coba lagi.');
+                return;
+            }
+
+            // Kirim ke backend
+            fetch('/api/pembelian/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    if (data.orderId) {
+                        // Tampilkan detail checkout di modal
+                        const checkoutDetails = document.getElementById('checkoutDetails');
+                        const items = cart.map(item => `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>${item.name} (${item.quantity}x)</span>
+                                <span>Rp ${(item.price * item.quantity).toLocaleString()}</span>
+                            </div>
+                        `).join('');
+
+                        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                        
+                        checkoutDetails.innerHTML = `
+                            <div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px 0;">
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Detail Pembelian:</strong>
+                                </div>
+                                ${items}
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold;">
+                                    <span>Total:</span>
+                                    <span>Rp ${total.toLocaleString()}</span>
+                                </div>
+                                <div style="margin-top: 15px;">
+                                    <small>Order ID: #${data.orderId}</small><br>
+                                    <small>Tanggal: ${new Date().toLocaleString()}</small>
+                                </div>
+                            </div>
+                        `;
+
+                        // Tampilkan modal sukses
+                        const successModal = document.getElementById('successModal');
+                        successModal.style.display = 'block';
+
+                        // Kosongkan cart
+                        cart = [];
+                        updateCart();
+                        cartModal.style.display = 'none';
+
+                        // Handle close modal
+                        const closeModal = document.querySelector('.close-modal');
+                        const backToShop = document.getElementById('backToShop');
+
+                        closeModal.onclick = () => {
+                            successModal.style.display = 'none';
+                        };
+
+                        backToShop.onclick = () => {
+                            successModal.style.display = 'none';
+                            window.location.href = '/shop';
+                        };
+
+                        // Close modal when clicking outside
+                        window.onclick = (e) => {
+                            if (e.target === successModal) {
+                                successModal.style.display = 'none';
+                            }
+                        };
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat checkout. Silakan coba lagi.');
+            });
+        });
+    });
+    </script>
 </body>
 </html>

@@ -1,108 +1,141 @@
 <!DOCTYPE html>
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <title th:text="${pembelianId != null} ? 'Edit Pembelian' : 'Tambah Pembelian'">Form Pembelian</title>
-  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
-  <style>
-    .form-container {
-      max-width: 520px;
-      margin: 48px auto 0 auto;
-      background: #fff;
-      padding: 32px 28px 24px 28px;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px #0001;
-    }
-    #pembelianForm input[type="text"],
-    #pembelianForm input[type="number"],
-    #pembelianForm input[type="date"] {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-    #pembelianForm button[type="submit"], #pembelianForm button[type="button"] {
-      width: auto;
-      display: inline-block;
-      margin-right: 10px;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title th:text="${pembelianId != null} ? 'Edit Pembelian' : 'Tambah Pembelian'">Form Pembelian</title>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+    <style>
+        .form-container {
+            max-width: 520px;
+            margin: 48px auto 0 auto;
+            background: #fff;
+            padding: 32px 28px 24px 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0001;
+        }
+        #pembelianForm select,
+        #pembelianForm input[type="number"],
+        #pembelianForm input[type="date"] {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-  <div class="admin-layout">
-    <aside class="sidebar">
-      <h2 class="sidebar-title">PetClinic+</h2>
-      <nav class="menu">
-        <a th:href="@{/admin/admindashboard}">Dashboard</a>
-        <a th:href="@{/admin/produk}">Kelola Produk</a>
-        <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
-        <a th:href="@{/admin/user}">Kelola User</a>
-        <a th:href="@{/admin/pembelian}" class="active">Kelola Pembelian</a>
-        <a th:href="@{/logout}">Logout</a>
-      </nav>
-    </aside>
-    <main class="dashboard-content">
-      <div class="form-container">
-        <h2 th:text="${pembelianId != null} ? 'Edit Pembelian' : 'Tambah Pembelian'">Form Pembelian</h2>
-        <form id="pembelianForm">
-          <input type="hidden" id="pembelianId" th:value="${pembelianId}">
-          <input type="text" id="namaPembeli" placeholder="Nama Pembeli" required>
-          <input type="text" id="produk" placeholder="Produk" required>
-          <input type="number" id="jumlah" placeholder="Jumlah" required>
-          <input type="number" id="total" placeholder="Total Harga" required>
-          <input type="date" id="tanggal" placeholder="Tanggal" required>
-          <button type="submit" th:text="${pembelianId != null} ? 'Simpan Perubahan' : 'Tambah Pembelian'">Tambah Pembelian</button>
-          <button type="button" id="batalBtn">Batal</button>
-        </form>
-      </div>
-    </main>
-  </div>
-  <script>
-    const form = document.getElementById("pembelianForm");
-    const batalBtn = document.getElementById("batalBtn");
-    const pembelianId = document.getElementById("pembelianId").value;
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <h2 class="sidebar-title">PetClinic+</h2>
+            <nav class="menu">
+                <a th:href="@{/admin/admindashboard}">Dashboard</a>
+                <a th:href="@{/admin/produk}">Kelola Produk</a>
+                <a th:href="@{/admin/reservasi}">Kelola Reservasi</a>
+                <a th:href="@{/admin/user}">Kelola User</a>
+                <a th:href="@{/admin/pembelian}" class="active">Kelola Pembelian</a>
+                <a th:href="@{/logout}">Logout</a>
+            </nav>
+        </aside>
+        
+        <main class="dashboard-content">
+            <div class="form-container">
+                <h2 th:text="${pembelianId != null} ? 'Edit Pembelian' : 'Tambah Pembelian'">Form Pembelian</h2>
+                <form id="pembelianForm">
+                    <input type="hidden" id="pembelianId" th:value="${pembelianId}">
+                    
+                    <select id="userId" required>
+                        <option value="">Pilih Pembeli</option>
+                    </select>
+                    
+                    <select id="produkId" required>
+                        <option value="">Pilih Produk</option>
+                    </select>
+                    
+                    <input type="number" id="jumlah" placeholder="Jumlah" required>
+                    <input type="number" id="total" placeholder="Total Harga" readonly>
+                    <input type="date" id="tanggal" required>
+                    
+                    <button type="submit" th:text="${pembelianId != null} ? 'Simpan Perubahan' : 'Tambah Pembelian'">
+                        Tambah Pembelian
+                    </button>
+                    <button type="button" id="batalBtn">Batal</button>
+                </form>
+            </div>
+        </main>
+    </div>
 
-    // Jika edit, ambil data pembelian dan isi form
-    if (pembelianId) {
-      window.onload = async function() {
-        const res = await fetch(`/api/pembelian/${pembelianId}`);
-        const data = await res.json();
-        document.getElementById("namaPembeli").value = data.namaPembeli;
-        document.getElementById("produk").value = data.produk;
-        document.getElementById("jumlah").value = data.jumlah;
-        document.getElementById("total").value = data.total;
-        document.getElementById("tanggal").value = data.tanggal;
-      };
-    }
+    <script>
+        const form = document.getElementById("pembelianForm");
+        const batalBtn = document.getElementById("batalBtn");
+        const pembelianId = document.getElementById("pembelianId").value;
+        const produkSelect = document.getElementById("produkId");
+        const jumlahInput = document.getElementById("jumlah");
+        const totalInput = document.getElementById("total");
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const data = {
-        namaPembeli: document.getElementById("namaPembeli").value,
-        produk: document.getElementById("produk").value,
-        jumlah: parseInt(document.getElementById("jumlah").value),
-        total: parseFloat(document.getElementById("total").value),
-        tanggal: document.getElementById("tanggal").value
-      };
-      if (pembelianId) {
-        await fetch(`/api/pembelian/${pembelianId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-      } else {
-        await fetch("/api/pembelian", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-      }
-      window.location.href = "/admin/pembelian";
-    };
-    batalBtn.onclick = () => window.location.href = "/admin/pembelian";
-  </script>
+        // Load users and products when page loads
+        window.onload = async function() {
+            // Load users
+            const usersRes = await fetch("/api/user");
+            const users = await usersRes.json();
+            const userSelect = document.getElementById("userId");
+            users.forEach(user => {
+                userSelect.innerHTML += `<option value="${user.id}">${user.username}</option>`;
+            });
+
+            // Load products
+            const productsRes = await fetch("/api/produk");
+            const products = await productsRes.json();
+            products.forEach(prod => {
+                produkSelect.innerHTML += `<option value="${prod.id}" data-harga="${prod.harga}">${prod.nama}</option>`;
+            });
+
+            // If editing, load existing data
+            if (pembelianId) {
+                const res = await fetch(`/api/pembelian/${pembelianId}`);
+                const data = await res.json();
+                document.getElementById("userId").value = data.user.id;
+                document.getElementById("produkId").value = data.produk.id;
+                document.getElementById("jumlah").value = data.jumlah;
+                document.getElementById("total").value = data.total;
+                document.getElementById("tanggal").value = data.tanggal.split('T')[0];
+            }
+        };
+
+        // Calculate total when quantity changes
+        jumlahInput.onchange = function() {
+            const selectedOption = produkSelect.options[produkSelect.selectedIndex];
+            const harga = selectedOption.dataset.harga;
+            const jumlah = this.value;
+            totalInput.value = (harga * jumlah).toFixed(2);
+        };
+
+        // Handle form submission
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                user: { id: document.getElementById("userId").value },
+                produk: { id: document.getElementById("produkId").value },
+                jumlah: parseInt(document.getElementById("jumlah").value),
+                total: parseFloat(document.getElementById("total").value),
+                tanggal: new Date(document.getElementById("tanggal").value)
+            };
+
+            const url = pembelianId ? `/api/pembelian/${pembelianId}` : "/api/pembelian";
+            const method = pembelianId ? "PUT" : "POST";
+
+            await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            window.location.href = "/admin/pembelian";
+        };
+
+        batalBtn.onclick = () => window.location.href = "/admin/pembelian";
+    </script>
 </body>
 </html>

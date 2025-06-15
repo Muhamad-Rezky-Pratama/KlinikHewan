@@ -19,9 +19,8 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         for (GrantedAuthority auth : authentication.getAuthorities()) {
             if ("ROLE_admin".equals(auth.getAuthority())) {
                 response.sendRedirect("/admin/admindashboard");
-                return;
-            } else if ("ROLE_user".equals(auth.getAuthority())) {
-                response.sendRedirect("/user/userdashboard");
+                return;            } else if ("ROLE_user".equals(auth.getAuthority())) {
+                response.sendRedirect("/");
                 return;
             }
         }

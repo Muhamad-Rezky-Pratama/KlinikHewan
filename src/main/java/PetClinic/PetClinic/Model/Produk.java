@@ -14,7 +14,7 @@ public class Produk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id; // Menggunakan Integer untuk konsistensi
 
     private String nama;
     private String deskripsi;

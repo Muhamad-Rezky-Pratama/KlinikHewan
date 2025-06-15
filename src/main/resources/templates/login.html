@@ -4,17 +4,146 @@
   <meta charset="UTF-8">
   <title>Login - PetClinic+</title>
   <link rel="stylesheet" th:href="@{/css/login.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <div class="login-box">
-    <h2>Login</h2>
-    <form th:action="@{/login}" method="post">
-      <input type="email" name="username" placeholder="Email" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <p th:if="${param.error}" style="color:red; text-align:center;">Email atau password salah.</p>
+    <h2>🐾 Login</h2>
+    <form th:action="@{/login}" method="post" id="loginForm" onsubmit="return validateLogin()" novalidate>
+      
+      <div class="input-group">
+        <input type="email" name="username" id="email" placeholder="Email" required />
+        <small class="error-text">Format email tidak valid.</small>
+      </div>
+      
+      <div class="input-group">
+        <input type="password" name="password" id="password" placeholder="Password" required />
+        <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+        <small class="error-text">Password minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.</small>
+      </div>
+      
+      <button type="submit" class="login-button">
+        <i class="fas fa-sign-in-alt"></i>
+        Login
+      </button>
+      
+      <p th:if="${param.error}" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        Email atau password salah.
+      </p>
+
     </form>
-    <a th:href="@{/register}">Belum punya akun? Register</a>
+    <a th:href="@{/register}">
+      <i class="fas fa-user-plus"></i>
+      Belum punya akun? Register
+    </a>
   </div>
+
+  <script>
+    const patterns = {
+      email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/
+    };
+
+    function showError(input) {
+      input.classList.remove('valid-input');
+      input.classList.add('invalid-input');
+    }
+
+    function showSuccess(input) {
+      input.classList.remove('invalid-input');
+      input.classList.add('valid-input');
+    }
+    
+    function resetValidation(input) {
+        input.classList.remove('valid-input', 'invalid-input');
+    }
+
+    function validateLogin() {
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      let isFormValid = true;
+
+      if (!patterns.email.test(email.value)) {
+        showError(email);
+        isFormValid = false;
+      } else {
+        showSuccess(email);
+      }
+      
+      if (password.value.trim() === '') {
+        showError(password);
+        isFormValid = false;
+      } else {
+        if (!patterns.password.test(password.value)) {
+            showError(password);
+            isFormValid = false;
+        } else {
+            showSuccess(password);
+        }
+      }
+      return isFormValid;
+    }
+
+    // --- Event Listeners ---
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    emailInput.addEventListener('input', function() {
+      if (patterns.email.test(this.value)) {
+        showSuccess(this);
+      } else {
+        showError(this);
+      }
+    });
+
+    passwordInput.addEventListener('input', function() {
+      if (patterns.password.test(this.value)) {
+        showSuccess(this);
+      } else {
+        showError(this);
+      }
+    });
+    
+    document.querySelectorAll('.input-group input').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                resetValidation(this);
+            }
+        });
+    });
+
+    // Fungsionalitas Show/Hide Password
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+      passwordInput.focus();
+    });
+    
+    togglePassword.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+    });
+
+    // --- PENAMBAHAN KODE UNTUK TOMBOL ENTER ---
+
+    // Ketika Enter ditekan di kolom email, pindah ke kolom password
+    emailInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault(); // Mencegah form ter-submit
+            passwordInput.focus();  // Pindah fokus ke password
+        }
+    });
+
+    // Ketika Enter ditekan di kolom password, klik tombol login
+    passwordInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault(); // Mencegah aksi default
+            document.querySelector('.login-button').click(); // Simulasikan klik pada tombol
+        }
+    });
+  </script>
 </body>
 </html>

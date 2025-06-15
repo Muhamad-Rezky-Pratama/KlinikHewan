@@ -3,20 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservasi Klinik - PetClinic+</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            min-width: 160px;
+            z-index: 1000;
+        }
+        
+        .dropdown-menu a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .show {
+            display: block;
+        }
+        
+        .dropdown-toggle::after {
+            content: '▼';
+            margin-left: 5px;
+            font-size: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-
-    <!-- Navbar -->
+<div class="container">    <!-- Navbar -->
     <div class="navbar">
         <div class="logo">PetClinic+</div>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/clinic">Clinic</a></li>
-            <li><a href="#">Shop</a></li>
-            <li><a href="#">Login</a></li>
+            <li><a href="/shop">Shop</a></li>
+            <li th:if="${loggedInUser == null}">
+                <a href="/login">Login</a>
+            </li>
+            <li th:if="${loggedInUser != null}" class="dropdown">
+                <a href="#" class="dropdown-toggle" th:text="${loggedInUser}">User</a>
+                <div class="dropdown-menu">
+                    <a th:href="@{/user/userdashboard}" th:if="${userRole == 'USER'}">Dashboard</a>
+                    <a th:href="@{/admin/admindashboard}" th:if="${userRole == 'ADMIN'}">Dashboard</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </li>
         </ul>
     </div>
 
@@ -104,31 +150,76 @@
 </footer>
 
 <script>
-document.querySelector("form").addEventListener("submit", function (e) {
+document.querySelector("form").addEventListener("submit", async function (e) {
     e.preventDefault();
-    const namaPemilik = document.getElementById("namaPemilik").value;
-    const namaHewan = document.getElementById("namaHewan").value;
-    const jenisHewan = document.getElementById("jenisHewan").value;
-    const layanan = document.getElementById("layanan").value;
-    const jadwal = document.getElementById("jadwal").value;
-    const catatan = document.getElementById("catatan").value;
 
-    const dokterList = ["drh. Rika", "drh. Bayu", "drh. Amanda"];
-    const dokter = dokterList[Math.floor(Math.random() * dokterList.length)];
+    // List dokter
+    const dokterList = ["Dr. Rika", "Dr. Bayu", "Dr. Amanda"];
+    const dokter = dokterList[Math.floor(Math.random() * dokterList.length)];    // Data reservasi yang akan dikirim ke server
+    const reservasiData = {
+        namaPemilik: document.getElementById("namaPemilik").value,
+        namaHewan: document.getElementById("namaHewan").value,
+        jenisLayanan: document.getElementById("layanan").value,
+        tanggal: document.getElementById("jadwal").value,
+        catatan: document.getElementById("catatan").value || '',
+        dokter: dokter
+    };
 
-    document.getElementById("popupDetail").innerHTML = `
-        <p><strong>Nama Pemilik:</strong> ${namaPemilik}</p>
-        <p><strong>Nama Hewan:</strong> ${namaHewan} (${jenisHewan})</p>
-        <p><strong>Layanan:</strong> ${layanan}</p>
-        <p><strong>Tanggal Reservasi:</strong> ${jadwal}</p>
-        <p><strong>Dokter:</strong> ${dokter}</p>
-        ${catatan ? `<p><strong>Catatan:</strong> ${catatan}</p>` : ''}
-    `;
-    document.getElementById("popup").style.display = "flex";
+    try {
+        const response = await fetch('/api/reservasi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reservasiData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Gagal menyimpan reservasi');
+        }
+
+        const savedData = await response.json();        // Tampilkan popup dengan data yang tersimpan
+        document.getElementById("popupDetail").innerHTML = `
+            <p><strong>Nama Pemilik:</strong> ${savedData.namaPemilik}</p>
+            <p><strong>Nama Hewan:</strong> ${savedData.namaHewan}</p>
+            <p><strong>Layanan:</strong> ${savedData.jenisLayanan}</p>
+            <p><strong>Tanggal Reservasi:</strong> ${savedData.tanggal}</p>
+            <p><strong>Dokter:</strong> ${savedData.dokter}</p>
+            ${savedData.catatan ? `<p><strong>Catatan:</strong> ${savedData.catatan}</p>` : ''}
+        `;
+        document.getElementById("popup").style.display = "flex";
+
+        // Reset form
+        e.target.reset();
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan reservasi. Silakan coba lagi.');
+    }
 });
 
 document.getElementById("closePopup").addEventListener("click", function () {
     document.getElementById("popup").style.display = "none";
+});
+
+// Navbar dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    
+    if (dropdownToggle && dropdownMenu) {
+        dropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.matches('.dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
 });
 </script>
 

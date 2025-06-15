@@ -45,10 +45,8 @@ public class DashboardController {
     public String pembelianForm(@PathVariable(required = false) Long id, Model model) {
         model.addAttribute("pembelianId", id);
         return "admin/pembelian-form"; // templates/admin/pembelian-form.html
-    }
-
-    @GetMapping({"/admin/reservasi/tambah", "/admin/reservasi/edit/{id}"})
-    public String reservasiForm(@PathVariable(required = false) Long id, Model model) {
+    }    @GetMapping({"/admin/reservasi/tambah", "/admin/reservasi/edit/{id}"})
+    public String reservasiForm(@PathVariable(required = false) Integer id, Model model) {
         model.addAttribute("reservasiId", id);
         return "admin/reservasi-form"; // templates/admin/reservasi-form.html
     }

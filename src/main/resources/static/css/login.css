@@ -1,80 +1,215 @@
+/* login.css */
+
 /* Center the form vertically and horizontally */
 body {
-  background: #f6f8fa;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #6a3fa0, #8b5cc5);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #2d3a4b;
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
 }
 
-form {
-  background: #fff;
-  padding: 32px 28px 24px 28px;
-  border-radius: 12px;
-  box-shadow: 0 2px 16px #0001;
-  display: flex;
-  flex-direction: column;
-  min-width: 320px;
-  max-width: 360px;
-  margin: 0 auto;
+.login-box h2 {
+    margin: 0 0 30px;
+    color: #5e3b76;
+    font-size: 2rem;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #f9f9f9;
-  transition: border 0.2s;
+.login-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Mengurangi gap antar input-group */
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus {
-  border: 1.5px solid #4e8cff;
-  outline: none;
+/* Aturan umum untuk input */
+.login-box input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
 }
 
-button[type="submit"], button {
-  background: #4e8cff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 0;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: background 0.2s;
+.login-box input:focus {
+    border-color: #6a3fa0;
 }
 
-button[type="submit"]:hover, button:hover {
-  background: #2563eb;
+.login-button {
+    background: #6a3fa0;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px; /* Jarak dari elemen terakhir di atasnya */
 }
 
-.register-box, .login-box {
-  margin: 0 auto;
-  width: 100%;
-  max-width: 400px;
+.login-button:hover {
+    background: #8b5cc5;
+    transform: translateY(-2px);
 }
 
-a {
-  color: #4e8cff;
-  text-decoration: none;
-  display: block;
-  text-align: center;
-  margin-top: 12px;
+.login-box a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 25px;
+    color: #6a3fa0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
 }
 
-a:hover {
-  text-decoration: underline;
+.login-box a:hover {
+    color: #8b5cc5;
+    text-decoration: underline;
 }
+
+/* Message styling */
+.error-message, .success-message {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.error-message {
+    color: #ff4444;
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.success-message {
+    color: #00C851;
+    background-color: rgba(0, 200, 81, 0.1);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .login-box {
+        margin: 20px;
+        padding: 30px;
+    }
+    .login-box h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* ============================================================== */
+/* PENYESUAIAN SHOW/HIDE PASSWORD, HINT, & VALIDASI BORDER (KODE BARU) */
+/* ============================================================== */
+
+/* Jadikan .input-group sebagai referensi posisi (relative) untuk ikon */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px; /* Jarak default antar input group */
+}
+
+/* Beri padding kanan pada input password agar tidak tertutup ikon */
+.input-group input#password {
+    padding-right: 45px; /* Beri ruang untuk ikon */
+}
+
+/* Aturan untuk ikon mata (toggle-password) */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 18px; /* Posisi vertikal dari atas. Sesuaikan jika perlu. */
+    cursor: pointer;
+    color: #888;
+    z-index: 2; /* Pastikan ikon di atas input */
+}
+
+.toggle-password:hover {
+    color: #6a3fa0;
+}
+
+/* Aturan untuk teks hint/error di bawah input */
+.input-group small.error-text {
+    display: block; /* Bukan 'absolute' agar bisa mendorong konten lain */
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    color: #ff4444;
+    padding-left: 5px;
+    
+    /* Sembunyikan secara default dengan mengubah properti ini */
+    height: 0;
+    margin-top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Tampilkan hint/error saat input memiliki kelas .invalid-input atau fokus & belum valid */
+.input-group input.invalid-input ~ small.error-text,
+.input-group input:focus:not(.valid-input) ~ small.error-text {
+    /* Kembalikan properti untuk menampilkan pesan */
+    height: auto; /* Biarkan tinggi sesuai konten */
+    margin-top: 5px; /* Beri jarak dari input di atasnya */
+    opacity: 1;
+    visibility: visible;
+    
+    /* INI KUNCINYA: Memberi jarak ke elemen di bawahnya (tombol login) */
+    margin-bottom: 5px; 
+}
+
+
+/* Gaya border untuk input yang valid */
+.valid-input {
+    border-color: #4CAF50 !important;
+}
+
+/* Gaya border untuk input yang tidak valid */
+.invalid-input {
+    border-color: #ff4444 !important;
+}
+
+/* Menyembunyikan placeholder ketika input difokuskan */
+.input-group input:focus::placeholder {
+    color: transparent;
+}
+/* ============================================================== */
+/* Akhir PENYESUAIAN KHUSUS */
+/* ============================================================== */

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <title>PetClinic - Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
 
@@ -14,10 +14,20 @@
         <div class="navbar">
             <div class="logo">PetClinic+</div>
             <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a th:href="@{/clinic}">Clinic</a></li>
+                <li><a th:href="@{/}">Home</a></li>                <li><a th:href="@{/clinic}">Clinic</a></li>
                 <li><a th:href="@{/shop}">Shop</a></li>
-                <li><a th:href="@{/login}">Login</a></li>
+                <li th:if="${loggedInUser == null}"><a th:href="@{/login}">Login</a></li>
+                <li th:if="${loggedInUser != null}" class="user-profile">
+                    <a href="#" class="avatar-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span th:text="${loggedInUser}"></span>
+                    </a>
+                    <div class="dropdown-menu">                        <a th:href="@{/logout}" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </li>
             </ul>
         </div>
 
@@ -97,6 +107,24 @@
         </div>
     </footer>
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.querySelector('.avatar-link');
+            const userDropdown = document.querySelector('.dropdown-menu');
+            
+            // Toggle dropdown on button click
+            userMenuButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                userDropdown.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

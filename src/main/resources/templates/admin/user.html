@@ -17,10 +17,9 @@
         <a th:href="@{/admin/pembelian}">Kelola Pembelian</a>
         <a th:href="@{/logout}">Logout</a>
       </nav>
-    </aside>
-    <main class="dashboard-content">
+    </aside>    <main class="dashboard-content">
       <h2>Manajemen Pengguna</h2>
-      <button id="tambahBtn" type="button" style="margin-bottom:12px;">Tambah User</button>
+      <p>Kelola pengguna yang terdaftar di sistem.</p>
       <hr>
       <table border="1" width="100%">
         <thead>
@@ -34,12 +33,8 @@
         <tbody id="userTable"></tbody>
       </table>
     </main>
-  </div>
-  <script>
+  </div>  <script>
     const tableBody = document.getElementById("userTable");
-    const tambahBtn = document.getElementById("tambahBtn");
-
-    tambahBtn.onclick = () => window.location.href = "/admin/user/tambah";
 
     async function loadUsers() {
       const res = await fetch("/api/user");
